@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 
 
 interface Business {
@@ -19,15 +20,17 @@ interface Business {
 
 @Component({
   selector: 'app-bussinesslist',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './bussinesslist.component.html',
   styleUrl: './bussinesslist.component.scss'
 })
 export class BussinesslistComponent {
-searchTerm = 'Tiffin Service';
+  searchTerm = 'Tiffin Service';
   location = 'Ahmedabad';
   showResults = true;
   sortBy = 'recommended';
+
+  constructor(private router: Router) { }
 
   businesses: Business[] = [
     {
@@ -85,11 +88,13 @@ searchTerm = 'Tiffin Service';
 
   viewDetails(business: Business): void {
     console.log('View details for:', business.name);
+    this.router.navigate(['/businessdetails']);
     // Add your navigation logic here
   }
 
   contact(business: Business): void {
     console.log('Contact:', business.name);
+    this.router.navigate(['/businessreview']);
     // Add your contact logic here
   }
 }
