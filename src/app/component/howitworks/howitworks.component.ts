@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { RouterModule } from '@angular/router';
 
 interface Step {
   id: number;
@@ -19,7 +20,7 @@ interface Feature {
 
 @Component({
   selector: 'app-howitworks',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './howitworks.component.html',
   styleUrl: './howitworks.component.scss'
 })

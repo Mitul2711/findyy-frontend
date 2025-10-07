@@ -25,12 +25,12 @@ interface Business {
   styleUrl: './bussinesslist.component.scss'
 })
 export class BussinesslistComponent {
-searchTerm = 'Tiffin Service';
+  searchTerm = 'Tiffin Service';
   location = 'Ahmedabad';
   showResults = true;
   sortBy = 'recommended';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   businesses: Business[] = [
     {
@@ -88,12 +88,13 @@ searchTerm = 'Tiffin Service';
 
   viewDetails(business: Business): void {
     console.log('View details for:', business.name);
-this.router.navigate(['/businessreview']);
+    this.router.navigate(['/businessdetails']);
     // Add your navigation logic here
   }
 
   contact(business: Business): void {
     console.log('Contact:', business.name);
+    this.router.navigate(['/businessreview']);
     // Add your contact logic here
   }
 }
