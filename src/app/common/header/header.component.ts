@@ -1,17 +1,74 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../service/auth.service';
 
 @Component({
   selector: 'app-header',
   imports: [CommonModule, RouterModule],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.scss'
+  styleUrl: './header.component.scss',
+  providers: [AuthService]
 })
 export class HeaderComponent {
  mobileMenuOpen = false;
 
-  toggleMobileMenu() {
-    this.mobileMenuOpen = !this.mobileMenuOpen;
+ constructor(public authService: AuthService, private router: Router) {}
+
+  userMenuOpen = false;
+  userName = '';
+  userEmail = '';
+
+
+  ngOnInit(): void {
+    // Check if user is logged in
+    console.log(this.authService.currentUser());
+    
   }
+
+  getUserInitials(): string {
+    if (!this.authService.currentUser().first_name) return 'U';
+    
+    const names = this.authService.currentUser().first_name.trim().split(' ');
+    if (names.length >= 2) {
+      return (names[0][0] + names[1][0]).toUpperCase();
+    }
+    return this.authService.currentUser().first_name.substring(0, 2).toUpperCase();
+  }
+
+  toggleMobileMenu(): void {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
+    if (this.mobileMenuOpen) {
+      this.userMenuOpen = false;
+    }
+  }
+
+  closeMobileMenu(): void {
+    this.mobileMenuOpen = false;
+  }
+
+  toggleUserMenu(): void {
+    this.userMenuOpen = !this.userMenuOpen;
+  }
+
+  closeUserMenu(): void {
+    this.userMenuOpen = false;
+  }
+
+  logout(): void {
+    // Clear auth data
+    localStorage.removeItem('token');
+    
+    // Update state
+    this.userName = '';
+    this.userEmail = '';
+    
+    // Close menus
+    this.userMenuOpen = false;
+    this.mobileMenuOpen = false;
+    
+    // Redirect to home or login
+    this.router.navigate(['/login']);
+  }
+
 }
