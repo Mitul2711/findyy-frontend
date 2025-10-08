@@ -10,6 +10,9 @@ export const FixedRoutes = {
     SignUp: 'signup',
     Forgot: 'forgot',
   },
+  BusinessRegister: {
+    Business: 'business'
+  },
   Dashboard: 'dashboard',
   Wildcard: '**'
 };
