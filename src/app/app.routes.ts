@@ -9,6 +9,7 @@ import { BusinesscategoriesComponent } from './component/user/businesscategories
 import { HowitworksComponent } from './component/howitworks/howitworks.component';
 import { BusinessDetailComponent } from './component/user/business-details/business-details.component';
 import { BusinessInfoComponent } from './component/business/business-info/business-info.component';
+import { VerifyEmailComponent } from './auth/verify-email/verify-email.component';
 
 export const routes: Routes = [
     {path: "", component: HomeComponent},
@@ -20,5 +21,6 @@ export const routes: Routes = [
     {path: "businesscategory", component: BusinesscategoriesComponent},
     {path: "howitworks", component: HowitworksComponent},
     {path: "businessdetails", component: BusinessDetailComponent},
-    {path: "businessinfo", component: BusinessInfoComponent}
+    {path: "businessinfo", component: BusinessInfoComponent},
+    {path: "verifyemail", component: VerifyEmailComponent}
 ];

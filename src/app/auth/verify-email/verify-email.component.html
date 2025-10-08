@@ -1,0 +1,180 @@
+<div class="min-h-screen bg-gray-50 flex flex-col">
+    <!-- Main Content -->
+    <div class="flex-1 flex items-center justify-center px-4 py-16 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full">
+            <!-- Verification Card -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+                <!-- Icon -->
+                <div class="flex justify-center mb-6">
+                    <!-- Pending State Icon -->
+                    <div *ngIf="verificationStatus === 'pending'"
+                        class="w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center">
+                        <svg class="w-10 h-10 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+
+                    <!-- Loading State Icon -->
+                    <div *ngIf="verificationStatus === 'loading'"
+                        class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center">
+                        <svg class="w-10 h-10 text-blue-600 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                    </div>
+
+                    <!-- Success State Icon -->
+                    <div *ngIf="verificationStatus === 'success'"
+                        class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
+                        <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+
+                    <!-- Error State Icon -->
+                    <div *ngIf="verificationStatus === 'error'"
+                        class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center">
+                        <svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Pending State -->
+                <div *ngIf="verificationStatus === 'pending'">
+                    <h1 class="text-2xl font-bold text-gray-900 text-center mb-3">
+                        Verify Your Email
+                    </h1>
+                    <p class="text-gray-600 text-center mb-6">
+                        We've sent a verification link to
+                    </p>
+                    <p class="text-teal-600 font-semibold text-center mb-6">
+                        {{ userEmail }}
+                    </p>
+                    <p class="text-gray-600 text-center mb-8">
+                        Click the button below to verify your email address and activate your account.
+                    </p>
+
+                    <button (click)="handleVerifyEmail()"
+                        class="w-full py-3 px-4 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition font-medium shadow-sm">
+                        Verify Email Address
+                    </button>
+
+                    <div class="mt-6 text-center">
+                        <p class="text-sm text-gray-600 mb-3">
+                            Didn't receive the email?
+                        </p>
+                        <button (click)="handleResendEmail()"
+                            class="text-teal-600 hover:text-teal-700 font-medium text-sm">
+                            Resend Verification Email
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div *ngIf="verificationStatus === 'loading'">
+                    <h1 class="text-2xl font-bold text-gray-900 text-center mb-3">
+                        Verifying...
+                    </h1>
+                    <p class="text-gray-600 text-center mb-6">
+                        Please wait while we verify your email address.
+                    </p>
+                    <div class="flex justify-center">
+                        <div class="animate-pulse text-gray-400">
+                            This will only take a moment
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Success State -->
+                <div *ngIf="verificationStatus === 'success'">
+                    <h1 class="text-2xl font-bold text-gray-900 text-center mb-3">
+                        Email Verified!
+                    </h1>
+                    <p class="text-gray-600 text-center mb-6">
+                        Your email address has been successfully verified.
+                    </p>
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                        <p class="text-green-800 text-center text-sm">
+                            ✓ Account activated successfully
+                        </p>
+                    </div>
+                    <p class="text-gray-600 text-center mb-8">
+                        Redirecting you to the login page in {{ countdown }} seconds...
+                    </p>
+
+                    <button (click)="goToLoginPage()"
+                        class="w-full py-3 px-4 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition font-medium shadow-sm">
+                        Go to Login Page Now
+                    </button>
+                </div>
+
+                <!-- Error State -->
+                <div *ngIf="verificationStatus === 'error'">
+                    <h1 class="text-2xl font-bold text-gray-900 text-center mb-3">
+                        Verification Failed
+                    </h1>
+                    <p class="text-gray-600 text-center mb-6">
+                        We couldn't verify your email address.
+                    </p>
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                        <p class="text-red-800 text-center text-sm">
+                            {{ errorMessage }}
+                        </p>
+                    </div>
+
+                    <button (click)="handleVerifyEmail()"
+                        class="w-full py-3 px-4 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition font-medium shadow-sm mb-3">
+                        Try Again
+                    </button>
+
+                    <button (click)="handleResendEmail()"
+                        class="w-full py-3 px-4 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium">
+                        Resend Verification Email
+                    </button>
+                </div>
+            </div>
+
+            <!-- Help Section -->
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">
+                    Need help?
+                    <a routerLink="/support" class="text-teal-600 hover:text-teal-700 font-medium">
+                        Contact Support
+                    </a>
+                </p>
+            </div>
+
+            <!-- Tips Card -->
+            <div *ngIf="verificationStatus === 'pending'" class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <h3 class="text-sm font-semibold text-blue-900 mb-3">
+                    📧 Email Verification Tips
+                </h3>
+                <ul class="space-y-2 text-sm text-blue-800">
+                    <li class="flex items-start">
+                        <span class="mr-2">•</span>
+                        <span>Check your spam or junk folder</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="mr-2">•</span>
+                        <span>Add noreply&#64;localbiz.com to your contacts</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="mr-2">•</span>
+                        <span>Make sure you entered the correct email address</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="mr-2">•</span>
+                        <span>Wait a few minutes for the email to arrive</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
