@@ -1,0 +1,219 @@
+<div class="min-h-screen bg-gradient-to-br from-orange-50 via-teal-50 to-blue-50">
+
+    <!-- Hero Section -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <div
+                    class="inline-flex items-center gap-2 bg-orange-100 text-orange-700 px-4 py-2 rounded-full text-sm mb-6">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Join 5,000+ verified businesses
+                </div>
+                <h1 class="text-5xl font-bold text-gray-900 mb-6">
+                    Grow your business<br>Online, For Free
+                </h1>
+                <div class="h-2 w-64 bg-orange-600 mb-8"></div>
+                <p class="text-lg text-gray-600 mb-8">
+                    Connect with local customers actively searching for your services. Build trust,
+                    manage reviews, and grow your business with zero listing fees.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <button
+                        class="bg-orange-600 text-white px-8 py-3 rounded hover:bg-orange-700 transition flex items-center gap-2">
+                        Register Your Business
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </button>
+                    <button
+                        class="border-2 border-gray-300 text-gray-700 px-8 py-3 rounded hover:border-gray-400 transition">
+                        See How It Works
+                    </button>
+                </div>
+                <div class="grid grid-cols-3 gap-8 mt-12">
+                    <div>
+                        <div class="text-3xl font-bold text-teal-600">10K+</div>
+                        <div class="text-gray-600 text-sm">Active Users</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold text-orange-600">5K+</div>
+                        <div class="text-gray-600 text-sm">Businesses</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold text-blue-600">50K+</div>
+                        <div class="text-gray-600 text-sm">Reviews</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Preview Card -->
+            <div class="bg-white rounded-lg shadow-xl p-6">
+                <div class="bg-teal-50 border border-teal-200 rounded-lg p-4 mb-6 flex items-center gap-3">
+                    <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-gray-900">Profile Verified!</div>
+                        <div class="text-sm text-gray-600">Your business is now live</div>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium text-gray-700">Profile Completion</span>
+                        <span class="text-sm font-bold text-teal-600">85%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-teal-600 h-2 rounded-full" style="width: 85%"></div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-orange-50 p-4 rounded-lg">
+                        <div class="text-3xl font-bold text-orange-600">24</div>
+                        <div class="text-sm text-gray-600">New Inquiries</div>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-lg">
+                        <div class="text-3xl font-bold text-purple-600 flex items-center gap-1">
+                            4.8
+                            <span class="text-xl">⭐</span>
+                        </div>
+                        <div class="text-sm text-gray-600">Avg Rating</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Steps Section -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">Get Started in 4 Simple Steps</h2>
+            <p class="text-gray-600">Your business can be online in minutes</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div *ngFor="let step of steps"
+                class="bg-white rounded-lg shadow-md p-6 border border-gray-100 hover:shadow-lg transition group">
+                <div
+                    class="w-12 h-12 bg-orange-600 text-white rounded-lg flex items-center justify-center text-xl font-bold mb-4">
+                    {{ step.num }}
+                </div>
+                <svg class="w-8 h-8 text-gray-300 float-right -mt-16 group-hover:text-orange-600" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="step.iconPath" />
+                </svg>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">{{ step.title }}</h3>
+                <p class="text-gray-600 text-sm">{{ step.desc }}</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="grid lg:grid-cols-2 gap-12 items-start">
+            <div>
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Everything you need to succeed</h2>
+                <p class="text-gray-600 mb-8">
+                    LocalBiz provides all the tools to help your business get discovered and grow your customer base.
+                </p>
+
+                <div class="space-y-4 mb-8">
+                    <div *ngFor="let feature of features" class="flex items-center gap-3">
+                        <svg class="w-5 h-5 text-teal-600 flex-shrink-0" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span class="text-gray-700">{{ feature }}</span>
+                    </div>
+                </div>
+
+                <button
+                    class="border-2 border-gray-300 text-gray-700 px-6 py-2 rounded hover:border-gray-400 transition flex items-center gap-2">
+                    View All Features
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <div *ngFor="let benefit of benefits"
+                    class="bg-white rounded-lg shadow-md p-6 border border-gray-100 flex items-start gap-4 group hover:shadow-lg transition">
+                    <div class="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:bg-teal-100">
+                        <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                [attr.d]="benefit.iconPath" />
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="font-bold text-gray-900">{{ benefit.title }}</h3>
+                            <span class="text-xs font-semibold text-teal-600 bg-teal-50 px-2 py-1 rounded">
+                                {{ benefit.badge }}
+                            </span>
+                        </div>
+                        <p class="text-sm text-gray-600">{{ benefit.desc }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="bg-teal-700 py-16">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <svg class="w-16 h-16 text-white mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <h2 class="text-4xl font-bold text-white mb-4">Ready to Get Started?</h2>
+            <p class="text-orange-100 mb-8 text-lg">
+                Join thousands of businesses and customers already using Local Biz Finder. Get verified,
+                start getting reviews, and grow your business today.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <button class="bg-white text-teal-600 px-8 py-3 rounded hover:bg-teal-50 transition font-semibold">
+                    Find Services
+                </button>
+                <button
+                    class="bg-orange-600 text-white px-8 py-3 rounded hover:bg-orange-500 transition font-semibold">
+                    Register Business
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+            <p class="text-gray-600">Everything you need to know</p>
+        </div>
+
+        <div class="space-y-4">
+            <div *ngFor="let faq of faqs; let i = index" class="bg-white rounded-lg shadow-sm border border-gray-200">
+                <button (click)="toggleFaq(i)"
+                    class="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 transition">
+                    <span class="font-medium text-gray-900">{{ faq }}</span>
+                    <svg class="w-5 h-5 text-gray-500 transition-transform" [class.rotate-180]="openFaq === i"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+                <div *ngIf="openFaq === i" class="px-6 pb-4 text-gray-600">
+                    <p>Answer content would go here for "{{ faq }}"</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

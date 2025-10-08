@@ -36,8 +36,6 @@ export class AuthService {
 
     const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
     const decoded = atob(base64);
-    console.log(JSON.parse(decoded));
-    
     return JSON.parse(decoded);
   } catch (error) {
     console.error('Invalid JWT token', error);

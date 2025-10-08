@@ -1,4 +1,4 @@
-<div class="flex flex-col items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
+<!-- <div class="flex flex-col items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
   <div class="max-w-3xl text-center">
     <h1 class="text-5xl font-extrabold text-gray-900 mb-6">
       Find local help, fast.
@@ -114,4 +114,7 @@
     <button class="bg-orange-500 px-6 py-3 font-semibold rounded-lg hover:bg-orange-600" routerLink="/businessregister">
         Register Your Business - It's Free
     </button>
-</div>
+</div> -->
+
+@if(authService.currentUser().role == 'customer') { <app-user-home></app-user-home> }
+@else { <app-business-home></app-business-home> }

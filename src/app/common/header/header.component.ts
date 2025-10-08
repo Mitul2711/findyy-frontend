@@ -11,9 +11,13 @@ import { AuthService } from '../../service/auth.service';
   providers: [AuthService]
 })
 export class HeaderComponent {
- mobileMenuOpen = false;
 
- constructor(public authService: AuthService, private router: Router) {}
+ mobileMenuOpen = false;
+ isUser: boolean = false;
+
+ constructor(public authService: AuthService, private router: Router) {
+  this.isUser = authService.currentUser().role == "customer"
+ }
 
   userMenuOpen = false;
   userName = '';

@@ -53,13 +53,13 @@ export class VerifyEmailComponent {
           this.verificationStatus = 'error'; 
           throw new Error('Verification failed');
         }
-        console.log(this.verificationStatus);
         
       })
-
-
+      
+      
     } catch (error: any) {
       this.verificationStatus = 'error';
+      console.log(this.verificationStatus);
       this.errorMessage = error.message || 'Verification failed. Please try again or contact support.';
     }
   }
