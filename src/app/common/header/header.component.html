@@ -16,15 +16,15 @@
 
           <!-- Navigation Links -->
           <nav class="hidden md:flex items-center space-x-8">
-            <a routerLink="/businesscategory"
+            <a routerLink="/businesscategory" *ngIf="isUser"
               class="text-gray-700 hover:text-teal-600 font-medium text-base transition-colors">
               Categories
             </a>
             <a routerLink="/howitworks"
               class="text-gray-700 hover:text-teal-600 font-medium text-base transition-colors">
               How it Works
-            </a>
-            <a routerLink="/businessinfo"
+            </a> 
+            <a routerLink="/businessinfo" *ngIf="!isUser"
               class="text-gray-700 hover:text-teal-600 font-medium text-base transition-colors">
               For Business
             </a>
@@ -168,18 +168,15 @@
                   </div>
                   <span class="text-gray-900 font-medium">{{ authService.currentUser()?.first_name }} {{ authService.currentUser()?.last_name }}</span>
                 </div>
-                <a routerLink="/dashboard" 
-                   (click)="closeMobileMenu()"
+                <a (click)="closeMobileMenu()"
                    class="text-gray-700 hover:text-gray-900 font-medium text-sm transition-colors">
                   Dashboard
                 </a>
-                <a routerLink="/profile" 
-                   (click)="closeMobileMenu()"
+                <a (click)="closeMobileMenu()"
                    class="text-gray-700 hover:text-gray-900 font-medium text-sm transition-colors">
                   Profile
                 </a>
-                <a routerLink="/settings" 
-                   (click)="closeMobileMenu()"
+                <a (click)="closeMobileMenu()"
                    class="text-gray-700 hover:text-gray-900 font-medium text-sm transition-colors">
                   Settings
                 </a>
