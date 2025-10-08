@@ -16,7 +16,7 @@ export class HeaderComponent {
  isUser: boolean = false;
 
  constructor(public authService: AuthService, private router: Router) {
-  this.isUser = authService.currentUser().role == "customer"
+  this.isUser = authService.isUserLoggedIn() ? authService.currentUser().role == "customer" : true;
  }
 
   userMenuOpen = false;
