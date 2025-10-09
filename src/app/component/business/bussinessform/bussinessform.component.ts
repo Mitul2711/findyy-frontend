@@ -3,11 +3,12 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BusinessService } from '../../../service/business.service';
 import { AuthService } from '../../../service/auth.service';
+import { ToastService } from '../../../service/toast.service';
 
 interface DayHours {
-  open: string;
-  close: string;
-  closed: boolean;
+  openTime: string;
+  closeTime: string;
+  isClosed: boolean;
 }
 
 interface Step {
@@ -31,7 +32,7 @@ export class BussinessformComponent {
   hasApiHours = false;
   hasApiLocation = false;
 
-  constructor(private fb: FormBuilder, private businessService: BusinessService, private authService: AuthService) {
+  constructor(private fb: FormBuilder, private businessService: BusinessService, private authService: AuthService, private toastService: ToastService) {
     this.form = this.fb.group({
       id: [0],
       // Step 1
@@ -55,13 +56,13 @@ export class BussinessformComponent {
 
       // Step 3
       hours: this.fb.group({
-        sun: this.fb.group({ open: ['09:00'], close: ['17:00'], closed: [true] }),
-        mon: this.fb.group({ open: ['09:00'], close: ['17:00'], closed: [false] }),
-        tue: this.fb.group({ open: ['09:00'], close: ['17:00'], closed: [false] }),
-        wed: this.fb.group({ open: ['09:00'], close: ['17:00'], closed: [false] }),
-        thu: this.fb.group({ open: ['09:00'], close: ['17:00'], closed: [false] }),
-        fri: this.fb.group({ open: ['09:00'], close: ['17:00'], closed: [false] }),
-        sat: this.fb.group({ open: ['09:00'], close: ['17:00'], closed: [false] }),
+        sun: this.fb.group({ openTime: ['09:00'], closeTime: ['17:00'], isClosed: [true], id: 0, dayOfWeek: 0 }),
+        mon: this.fb.group({ openTime: ['09:00'], closeTime: ['17:00'], isClosed: [false], id: 0, dayOfWeek: 1 }),
+        tue: this.fb.group({ openTime: ['09:00'], closeTime: ['17:00'], isClosed: [false], id: 0, dayOfWeek: 2 }),
+        wed: this.fb.group({ openTime: ['09:00'], closeTime: ['17:00'], isClosed: [false], id: 0, dayOfWeek: 3 }),
+        thu: this.fb.group({ openTime: ['09:00'], closeTime: ['17:00'], isClosed: [false], id: 0, dayOfWeek: 4 }),
+        fri: this.fb.group({ openTime: ['09:00'], closeTime: ['17:00'], isClosed: [false], id: 0, dayOfWeek: 5 }),
+        sat: this.fb.group({ openTime: ['09:00'], closeTime: ['17:00'], isClosed: [false], id: 0, dayOfWeek: 6 }),
       })
     });
   }
@@ -121,13 +122,13 @@ export class BussinessformComponent {
 
   toggleDayClosed(day: string): void {
     const dayGroup = this.hoursGroup.get(day) as FormGroup;
-    const current = dayGroup.get('closed')?.value;
-    dayGroup.patchValue({ closed: !current });
+    const current = dayGroup.get('isClosed')?.value;
+    dayGroup.patchValue({ isClosed: !current });
   }
 
   getOpenDaysCount(): number {
     const hours = this.hoursGroup.value as { [key: string]: DayHours };
-    return Object.values(hours).filter(day => !day.closed).length;
+    return Object.values(hours).filter(day => !day.isClosed).length;
   }
 
   /** Navigation */
@@ -145,7 +146,7 @@ export class BussinessformComponent {
 
   /** Form submission */
   saveAndContinue(): void {
-    if (this.currentStep < 4 && this.isStepCompleted(this.currentStep)) {
+    if (this.currentStep < 4) {
       if (this.currentStep === 1) {
         const payload = {
           id: this.form.value.id,
@@ -158,11 +159,17 @@ export class BussinessformComponent {
           email: this.form.value.email,
         };
         if (payload.id === 0) {
-          this.businessService.registerBusiness(payload).subscribe(res => console.log(res));
+          this.businessService.registerBusiness(payload).subscribe(res => {
+            // this.toastService
+            this.checkStepNavigation();
+          });
         } else {
-          this.businessService.updateBusiness(payload).subscribe(res => console.log(res));
+          this.businessService.updateBusiness(payload).subscribe(res => {
+            console.log(res);
+            this.checkStepNavigation();
+          });
         }
-      } else if (this.currentStep == 2) {
+      } else if (this.currentStep === 2) {
         const payload = {
           id: this.form.value.locationId,
           businessId: this.form.value.id,
@@ -175,7 +182,24 @@ export class BussinessformComponent {
           latitude: this.form.value.latitude,
           longitude: this.form.value.longitude
         }
-        this.businessService.addUpdateBusinessLocation(payload).subscribe(res => console.log(res));
+        this.businessService.addUpdateBusinessLocation(payload).subscribe(res => {
+          console.log(res);
+          this.checkStepNavigation();
+        });
+      } else if (this.currentStep === 3) {
+        const payload = Object.values(this.form.value.hours).map((day: any) => ({
+          id: day.id,
+          businessId: this.form.value.id,
+          dayOfWeek: day.dayOfWeek,
+          openTime: `${day.openTime}:00`,
+          closeTime: `${day.closeTime}:00`,
+          isClosed: day.isClosed
+        }));
+
+        this.businessService.addUpdateBusinessHours(payload).subscribe(res => {
+          console.log(res);
+          this.checkStepNavigation();
+        });
       }
     }
   }
@@ -191,10 +215,10 @@ export class BussinessformComponent {
 
   /** Patch API response */
   patchValue() {
-    this.businessService.getBusinessData().subscribe((res: any) => {
-      if (!res || res.length === 0) return;
+    this.businessService.getBusinessDataById(this.authService.currentUser().UserId).subscribe((res: any) => {
+      if (!res) return;
 
-      const data = res[0];
+      const data = res;
 
       // Step 1
       this.form.patchValue({
@@ -207,39 +231,71 @@ export class BussinessformComponent {
         phone: data.phone
       });
 
-      // Step 2 (location)
-      if (data.location) {
-        this.hasApiLocation = true;
-        this.form.patchValue({
-          address1: data.location.address1 || '',
-          address2: data.location.address2 || '',
-          city: data.location.city || '',
-          state: data.location.state || '',
-          country: data.location.country || '',
-          postalCode: data.location.postalCode || '',
-          latitude: data.location.latitude || '',
-          longitude: data.location.longitude || '',
-        });
-      }
+      this.businessService.getBusinessLocationById(data.id).subscribe((locationRes: any) => {
+        if (locationRes) {
+          this.hasApiLocation = true;
+          this.form.patchValue({
+            address1: locationRes.addressLine1 || '',
+            address2: locationRes.addressLine2 || '',
+            city: locationRes.city || '',
+            state: locationRes.state || '',
+            country: locationRes.country || '',
+            postalCode: locationRes.postalCode || '',
+            latitude: locationRes.latitude || '',
+            longitude: locationRes.longitude || '',
+          });
+        } else {
+          this.hasApiLocation = false;
+        }
 
-      // Step 3 (hours)
-      if (data.hours && data.hours.length > 0) {
-        this.hasApiHours = true;
-        const hoursGroup = this.hoursGroup;
-        data.hours.forEach((item: any) => {
-          if (hoursGroup.get(item.day)) {
-            hoursGroup.get(item.day)?.patchValue({
-              open: item.open,
-              close: item.close,
-              closed: item.closed
-            });
-          }
-        });
-      } else {
-        this.hasApiHours = false; // no API hours, keep defaults
-      }
+        this.checkStepNavigation(); // <-- Navigate after Step 2 patch
+      });
 
-      console.log(this.form.value);
+      const dayMap = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+      this.businessService.getBusinessHoursById(data.id).subscribe((hoursRes: any) => {
+        if (hoursRes && hoursRes.length > 0) {
+          this.hasApiHours = true;
+          const hoursGroup = this.form.get('hours') as FormGroup;
+
+          hoursRes.forEach((item: any) => {
+            const dayName = dayMap[item.dayOfWeek];
+            const dayControl = hoursGroup.get(dayName) as FormGroup;
+            if (dayControl) {
+              dayControl.patchValue({
+                id: item.id,
+                openTime: item.openTime?.substring(0, 5),
+                closeTime: item.closeTime?.substring(0, 5),
+                isClosed: item.isClosed,
+                dayOfWeek: item.dayOfWeek
+              });
+            }
+          });
+        } else {
+          this.hasApiHours = false;
+        }
+
+        this.checkStepNavigation(); // <-- Navigate after Step 3 patch
+      });
     });
+  }
+
+  /** Automatically navigate to the next incomplete step */
+  checkStepNavigation() {
+    if (this.isStepCompleted(1) && this.isStepCompleted(2)  && this.isStepCompleted(3) && !this.isStepCompleted(4)) {
+      this.currentStep = 4; // go directly to Step 4
+    }
+    else if (this.isStepCompleted(1) && this.isStepCompleted(2) && !this.isStepCompleted(3)) {
+      this.currentStep = 3; // go directly to Step 3
+    } else if (this.isStepCompleted(1) && !this.isStepCompleted(2)) {
+      this.currentStep = 2; // go to Step 2
+    } else {
+      this.currentStep = 1; // default to Step 1
+    }
+    console.log(this.isStepCompleted(1));
+    console.log(this.isStepCompleted(2));
+    console.log(this.isStepCompleted(3));
+    console.log(this.isStepCompleted(4));
+    console.log(this.currentStep);
+    
   }
 }
