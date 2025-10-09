@@ -32,7 +32,6 @@ export class SignupComponent {
       this.toastService.showError('Passwords do not match!');
       return;
     }
-    console.log('Sign up attempt:',);
     let payload = {
       role: this.accountType,
       firstName: this.firstName,

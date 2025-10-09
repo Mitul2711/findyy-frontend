@@ -25,16 +25,28 @@ export class BusinessService {
     return this.http.get(`${Modules.Base}${FixedRoutes.BusinessRegister.Business}/${ownerUserId}`);
   }
 
+  getAllBusinessData() {
+    return this.http.get(`${Modules.Base}${FixedRoutes.BusinessRegister.Business}`);
+  }
+
   updateBusiness(data: any) {
     return this.http.post(`${Modules.Base}${FixedRoutes.BusinessRegister.Business}/${data.id}`, data);
   }
-
+  
   getBusinessLocationById(businessId: any) {
     return this.http.get(`${Modules.Base}${FixedRoutes.BusinessRegister.BusinessLocation}/${businessId}`);
   }
-
+  
   getBusinessHoursById(businessId: any) {
     return this.http.get(`${Modules.Base}${FixedRoutes.BusinessRegister.BusinessHours}/${businessId}`);
+  }
+  
+  getBusinessDashData(businessId: any) {
+    return this.http.get(`${Modules.Base}${FixedRoutes.BusinessDash}/${businessId}`);
+  }
+  
+  verifyBusiness(data: any) {
+    return this.http.post(`${Modules.Base}${FixedRoutes.BusinessRegister.BusinessVerify}/${data.id}`, data);
   }
 
 }

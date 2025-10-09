@@ -21,7 +21,6 @@ export class LoginComponent {
   onSubmit() {
     const payload = { email: this.email, password: this.password };
     this.authService.loginUser(payload).subscribe((res: any) => {
-      console.log(res);
       if (res.status) {
         localStorage.setItem("token", res.data);
         this.toastService.showSuccess(res.message);

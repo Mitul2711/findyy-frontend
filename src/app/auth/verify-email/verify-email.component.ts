@@ -44,7 +44,6 @@ export class VerifyEmailComponent {
     try {
       // Replace with your actual API call
       await this.authService.verifyEmail(this.verificationToken).subscribe((res: any) => {
-        console.log(res);
         if(res.status) {
           this.verificationStatus = 'success'; 
           this.startCountdown();
@@ -59,7 +58,6 @@ export class VerifyEmailComponent {
       
     } catch (error: any) {
       this.verificationStatus = 'error';
-      console.log(this.verificationStatus);
       this.errorMessage = error.message || 'Verification failed. Please try again or contact support.';
     }
   }

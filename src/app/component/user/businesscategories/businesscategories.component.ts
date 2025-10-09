@@ -143,7 +143,6 @@ export class BusinesscategoriesComponent {
 
   searchCategories(): void {
     // Search functionality is handled by filteredCategories getter
-    console.log('Searching for:', this.searchQuery);
   }
 
   getCategoryIcon(iconName: string): SafeHtml  {
