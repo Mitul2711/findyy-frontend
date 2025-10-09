@@ -159,14 +159,27 @@ export class BussinessformComponent {
           email: this.form.value.email,
         };
         if (payload.id === 0) {
-          this.businessService.registerBusiness(payload).subscribe(res => {
-            // this.toastService
-            this.checkStepNavigation();
+          this.businessService.registerBusiness(payload).subscribe((res: any) => {
+            if (res.status) {
+              this.toastService.showSuccess(res.message);
+            } else {
+              this.toastService.showError(res.message);
+            }
+            setTimeout(() => {
+              this.currentStep++;
+            }, 1000);
           });
         } else {
-          this.businessService.updateBusiness(payload).subscribe(res => {
+          this.businessService.updateBusiness(payload).subscribe((res: any) => {
             console.log(res);
-            this.checkStepNavigation();
+            if (res.status) {
+              this.toastService.showSuccess(res.message);
+            } else {
+              this.toastService.showError(res.message);
+            }
+            setTimeout(() => {
+              this.currentStep++;
+            }, 1000);
           });
         }
       } else if (this.currentStep === 2) {
@@ -182,9 +195,15 @@ export class BussinessformComponent {
           latitude: this.form.value.latitude,
           longitude: this.form.value.longitude
         }
-        this.businessService.addUpdateBusinessLocation(payload).subscribe(res => {
-          console.log(res);
-          this.checkStepNavigation();
+        this.businessService.addUpdateBusinessLocation(payload).subscribe((res: any) => {
+          if (res.status) {
+            this.toastService.showSuccess(res.message);
+          } else {
+            this.toastService.showError(res.message);
+          }
+          setTimeout(() => {
+            this.currentStep++;
+          }, 1000);
         });
       } else if (this.currentStep === 3) {
         const payload = Object.values(this.form.value.hours).map((day: any) => ({
@@ -196,9 +215,15 @@ export class BussinessformComponent {
           isClosed: day.isClosed
         }));
 
-        this.businessService.addUpdateBusinessHours(payload).subscribe(res => {
-          console.log(res);
-          this.checkStepNavigation();
+        this.businessService.addUpdateBusinessHours(payload).subscribe((res: any) => {
+          if (res.status) {
+            this.toastService.showSuccess(res.message);
+          } else {
+            this.toastService.showError(res.message);
+          }
+          setTimeout(() => {
+            this.checkStepNavigation();
+          }, 1000);
         });
       }
     }
@@ -218,7 +243,7 @@ export class BussinessformComponent {
     this.businessService.getBusinessDataById(this.authService.currentUser().UserId).subscribe((res: any) => {
       if (!res) return;
 
-      const data = res;
+      const data = res.data;
 
       // Step 1
       this.form.patchValue({
@@ -235,29 +260,30 @@ export class BussinessformComponent {
         if (locationRes) {
           this.hasApiLocation = true;
           this.form.patchValue({
-            address1: locationRes.addressLine1 || '',
-            address2: locationRes.addressLine2 || '',
-            city: locationRes.city || '',
-            state: locationRes.state || '',
-            country: locationRes.country || '',
-            postalCode: locationRes.postalCode || '',
-            latitude: locationRes.latitude || '',
-            longitude: locationRes.longitude || '',
+            locationId: locationRes.data.id,
+            address1: locationRes.data.addressLine1 || '',
+            address2: locationRes.data.addressLine2 || '',
+            city: locationRes.data.city || '',
+            state: locationRes.data.state || '',
+            country: locationRes.data.country || '',
+            postalCode: locationRes.data.postalCode || '',
+            latitude: locationRes.data.latitude || '',
+            longitude: locationRes.data.longitude || '',
           });
         } else {
           this.hasApiLocation = false;
         }
 
-        this.checkStepNavigation(); // <-- Navigate after Step 2 patch
+        this.checkStepNavigation();
       });
 
       const dayMap = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
       this.businessService.getBusinessHoursById(data.id).subscribe((hoursRes: any) => {
-        if (hoursRes && hoursRes.length > 0) {
+        if (hoursRes.data && hoursRes.data.length > 0) {
           this.hasApiHours = true;
           const hoursGroup = this.form.get('hours') as FormGroup;
 
-          hoursRes.forEach((item: any) => {
+          hoursRes.data.forEach((item: any) => {
             const dayName = dayMap[item.dayOfWeek];
             const dayControl = hoursGroup.get(dayName) as FormGroup;
             if (dayControl) {
@@ -281,7 +307,7 @@ export class BussinessformComponent {
 
   /** Automatically navigate to the next incomplete step */
   checkStepNavigation() {
-    if (this.isStepCompleted(1) && this.isStepCompleted(2)  && this.isStepCompleted(3) && !this.isStepCompleted(4)) {
+    if (this.isStepCompleted(1) && this.isStepCompleted(2) && this.isStepCompleted(3) && !this.isStepCompleted(4)) {
       this.currentStep = 4; // go directly to Step 4
     }
     else if (this.isStepCompleted(1) && this.isStepCompleted(2) && !this.isStepCompleted(3)) {
@@ -296,6 +322,6 @@ export class BussinessformComponent {
     console.log(this.isStepCompleted(3));
     console.log(this.isStepCompleted(4));
     console.log(this.currentStep);
-    
+
   }
 }
