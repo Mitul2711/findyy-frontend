@@ -171,7 +171,6 @@ export class BussinessformComponent {
           });
         } else {
           this.businessService.updateBusiness(payload).subscribe((res: any) => {
-            console.log(res);
             if (res.status) {
               this.toastService.showSuccess(res.message);
             } else {
@@ -231,7 +230,6 @@ export class BussinessformComponent {
 
   onSubmit(): void {
     if (this.form.valid) {
-      console.log('Form Submitted ✅', this.form.value);
       alert('Business registered successfully!');
     } else {
       alert('Please fill all required fields before submitting.');
@@ -317,11 +315,5 @@ export class BussinessformComponent {
     } else {
       this.currentStep = 1; // default to Step 1
     }
-    console.log(this.isStepCompleted(1));
-    console.log(this.isStepCompleted(2));
-    console.log(this.isStepCompleted(3));
-    console.log(this.isStepCompleted(4));
-    console.log(this.currentStep);
-
   }
 }

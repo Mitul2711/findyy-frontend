@@ -21,15 +21,17 @@
                     manage reviews, and grow your business with zero listing fees.
                 </p>
                 <div class="flex flex-wrap gap-4">
-                    <button
-                        class="bg-orange-600 text-white px-8 py-3 rounded hover:bg-orange-700 transition flex items-center gap-2" routerLink="/businessregister">
+                    <button routerLink="/businessregister"
+                        class="group bg-orange-600 text-white px-8 py-3 rounded hover:bg-orange-700 transition flex items-center gap-2 overflow-hidden">
                         Register Your Business
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 transform transition-transform duration-300 group-hover:translate-x-2"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M14 5l7 7m0 0l-7 7m7-7H3" />
                         </svg>
                     </button>
-                    <button
+
+                    <button routerLink="/howitworks"
                         class="border-2 border-gray-300 text-gray-700 px-8 py-3 rounded hover:border-gray-400 transition">
                         See How It Works
                     </button>
@@ -52,7 +54,9 @@
 
             <!-- Dashboard Preview Card -->
             <div class="bg-white rounded-lg shadow-xl p-6">
-                <div class="bg-teal-50 border border-teal-200 rounded-lg p-4 mb-6 flex items-center gap-3">
+
+                <div class="bg-teal-50 border border-teal-200 rounded-lg p-4 mb-6 flex items-center gap-3"
+                    *ngIf="dashboardData?.isVerified">
                     <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -65,15 +69,32 @@
                     </div>
                 </div>
 
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 flex items-center gap-3"
+                    *ngIf="!dashboardData?.isVerified">
+                    <div class="w-10 h-10 bg-yellow-400 rounded-full flex pt-1 justify-center animate-pulse">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-gray-900">Verification In Progress</div>
+                        <div class="text-sm text-gray-600">We are reviewing your business information</div>
+                    </div>
+                </div>
+
                 <div class="mb-6">
                     <div class="flex justify-between items-center mb-2">
                         <span class="text-sm font-medium text-gray-700">Profile Completion</span>
-                        <span class="text-sm font-bold text-teal-600">85%</span>
+                        <span class="text-sm font-bold text-teal-600">{{dashboardData.completionPercentage}}%</span>
                     </div>
                     <div class="w-full bg-gray-200 rounded-full h-2">
-                        <div class="bg-teal-600 h-2 rounded-full" style="width: 85%"></div>
+                        <div class="h-2 rounded-full" [ngClass]="getProgressBarColor()"
+                            [style.width.%]="dashboardData.completionPercentage">
+                        </div>
                     </div>
                 </div>
+
 
                 <div class="grid grid-cols-2 gap-4">
                     <div class="bg-orange-50 p-4 rounded-lg">
@@ -149,7 +170,8 @@
             <div class="space-y-4">
                 <div *ngFor="let benefit of benefits"
                     class="bg-white rounded-lg shadow-md p-6 border border-gray-100 flex items-start gap-4 group hover:shadow-lg transition">
-                    <div class="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:bg-teal-100">
+                    <div
+                        class="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 group-hover:bg-teal-100">
                         <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 [attr.d]="benefit.iconPath" />
@@ -185,8 +207,8 @@
                 <button class="bg-white text-teal-600 px-8 py-3 rounded hover:bg-teal-50 transition font-semibold">
                     Find Services
                 </button>
-                <button
-                    class="bg-orange-600 text-white px-8 py-3 rounded hover:bg-orange-500 transition font-semibold">
+                <button class="bg-orange-600 text-white px-8 py-3 rounded hover:bg-orange-500 transition font-semibold"
+                    routerLink="/businessregister">
                     Register Business
                 </button>
             </div>

@@ -1,0 +1,347 @@
+<div class="min-h-screen bg-gradient-to-br from-orange-50 via-teal-50 to-blue-50">
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="text-3xl font-bold text-orange-600">{{ pendingCount }}</div>
+                <div class="text-sm text-gray-600">Pending Review</div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="text-3xl font-bold text-green-600">{{ verifiedCount }}</div>
+                <div class="text-sm text-gray-600">Verified</div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="text-3xl font-bold text-red-600">{{ rejectedCount }}</div>
+                <div class="text-sm text-gray-600">Rejected</div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="text-3xl font-bold text-teal-600">{{ totalCount }}</div>
+                <div class="text-sm text-gray-600">Total Businesses</div>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="bg-white rounded-lg shadow mb-6">
+            <div class="flex border-b">
+                <button *ngFor="let tab of tabs" (click)="setFilter(tab.value)"
+                    [class.border-b-2]="filterStatus === tab.value" [class.border-teal-600]="filterStatus === tab.value"
+                    [class.text-teal-600]="filterStatus === tab.value"
+                    class="px-6 py-3 text-gray-600 hover:text-gray-900 font-medium">
+                    {{ tab.label }} ({{ getCountByStatus(tab.value) }})
+                </button>
+            </div>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-6">
+            <!-- Business List Sidebar -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow overflow-hidden top-4">
+                    <div class="bg-gray-50 px-4 py-3">
+                        <h3 class="font-bold text-gray-900">Business List</h3>
+                        <p class="text-sm text-gray-600">{{ filteredBusinesses.length }} businesses</p>
+                    </div>
+                    <div class="max-h-[calc(100vh-300px)] overflow-y-auto">
+                        <button *ngFor="let business of filteredBusinesses" (click)="selectBusiness(business)"
+                            [class.bg-teal-50]="selectedBusiness?.id === business.id"
+                            [class.border-l-4]="selectedBusiness?.id === business.id"
+                            [class.border-teal-600]="selectedBusiness?.id === business.id"
+                            class="w-full text-left px-4 py-4 hover:bg-gray-50 transition">
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-semibold text-gray-900 truncate">{{ business.name }}</h4>
+                                    <p class="text-sm text-gray-600 truncate">{{ business.category }}</p>
+                                    <p class="text-xs text-gray-500 mt-1">{{ business.createdAt | date:'short' }}
+                                    </p>
+                                </div>
+                                <span [ngClass]="{
+    'bg-orange-100 text-orange-700': business.status === 0,
+    'bg-green-100 text-green-700': business.status === 1,
+    'bg-red-100 text-red-700': business.status === 2
+  }" class="px-2 py-1 rounded text-xs font-semibold capitalize whitespace-nowrap">
+                                    {{ getStatusText(business.status) }}
+                                </span>
+
+                            </div>
+                        </button>
+
+                        <!-- Empty State -->
+                        <div *ngIf="filteredBusinesses.length === 0" class="p-8 text-center">
+                            <svg class="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                            </svg>
+                            <p class="text-sm text-gray-600">No businesses found</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Business Details Panel -->
+            <div class="lg:col-span-2">
+                <!-- Select Business Message -->
+                <div *ngIf="!selectedBusiness" class="bg-white rounded-lg shadow-lg p-12 text-center">
+                    <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Select a Business</h3>
+                    <p class="text-gray-600">Choose a business from the list to view details and take action</p>
+                </div>
+
+                <!-- Business Details -->
+                <div *ngIf="selectedBusiness" class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="p-6">
+                        <!-- Business Header -->
+                        <div class="flex items-start justify-between mb-6">
+                            <div class="flex-1">
+                                <h2 class="text-2xl font-bold text-gray-900 mb-2">{{ selectedBusiness.name }}</h2>
+                                <div class="flex items-center gap-4 text-sm text-gray-600">
+                                    <span class="inline-flex items-center gap-1">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                        </svg>
+                                        {{ selectedBusiness.category }}
+                                    </span>
+                                    <span class="inline-flex items-center gap-1">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        {{ selectedBusiness.createdAt | date:'short' }}
+                                    </span>
+                                </div>
+                            </div>
+                            <span [class.bg-orange-100]="selectedBusiness.status === 0"
+                                [class.text-orange-700]="selectedBusiness.status === 0"
+                                [class.bg-green-100]="selectedBusiness.status === 1"
+                                [class.text-green-700]="selectedBusiness.status === 1"
+                                [class.bg-red-100]="selectedBusiness.status === 2"
+                                [class.text-red-700]="selectedBusiness.status === 2"
+                                class="px-4 py-2 rounded-full text-sm font-semibold capitalize">
+                                {{ getStatusText(selectedBusiness.status) }}
+                            </span>
+                        </div>
+
+                        <!-- Step Progress -->
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+                            <div class="border-2 border-teal-600 bg-teal-50 rounded-lg p-3">
+                                <div class="flex items-center gap-2">
+                                    <div
+                                        class="w-6 h-6 bg-teal-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="font-semibold text-gray-900 text-sm truncate">Business Details</div>
+                                        <div class="text-xs text-gray-600">Completed</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="border-2 border-teal-600 bg-teal-50 rounded-lg p-3">
+                                <div class="flex items-center gap-2">
+                                    <div
+                                        class="w-6 h-6 bg-teal-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="font-semibold text-gray-900 text-sm truncate">Location</div>
+                                        <div class="text-xs text-gray-600">Completed</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="border-2 border-teal-600 bg-teal-50 rounded-lg p-3">
+                                <div class="flex items-center gap-2">
+                                    <div
+                                        class="w-6 h-6 bg-teal-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="font-semibold text-gray-900 text-sm truncate">Hours</div>
+                                        <div class="text-xs text-gray-600">Completed</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div [ngClass]="{
+    'border-teal-600 bg-teal-50': selectedBusiness.status !== 0,
+    'border-gray-300 bg-gray-50': selectedBusiness.status === 0
+  }" class="border-2 rounded-lg p-3">
+                                <div class="flex items-center gap-2">
+                                    <div *ngIf="selectedBusiness.status === 0"
+                                        class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-semibold text-sm flex-shrink-0">
+                                        4
+                                    </div>
+                                    <div *ngIf="selectedBusiness.status !== 0"
+                                        class="w-6 h-6 bg-teal-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="font-semibold text-gray-900 text-sm truncate">Review & Submit</div>
+                                        <div class="text-xs text-gray-600" *ngIf="selectedBusiness.status !== 0">Completed</div>
+                                        <div class="text-xs text-gray-600" *ngIf="selectedBusiness.status === 0">Pending</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Scrollable Content Area -->
+                        <div class="max-h-[calc(100vh-500px)] overflow-y-auto pr-2 space-y-6">
+                            <!-- Business Information -->
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900 mb-4">Business Information</h3>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700">Business Name</label>
+                                        <div class="mt-1 text-gray-900">{{ selectedBusiness.name }}</div>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700">Category</label>
+                                        <div class="mt-1 text-gray-900">{{ selectedBusiness.category }}</div>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700">Description</label>
+                                        <div class="mt-1 text-gray-900 text-sm">{{ selectedBusiness.description }}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Contact Information -->
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900 mb-4">Contact Information</h3>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700">Website</label>
+                                        <label class="text-sm font-medium text-gray-700">Website</label>
+                                        <div class="mt-1">
+                                            <a [href]="formatWebsiteUrl(selectedBusiness.website)" target="_blank"
+                                                rel="noopener noreferrer" class="text-teal-600 hover:underline">
+                                                {{ selectedBusiness.website }}
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700">Email</label>
+                                        <div class="mt-1 text-gray-900">{{ selectedBusiness.email }}</div>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700">Phone</label>
+                                        <div class="mt-1 text-gray-900">{{ selectedBusiness.phone }}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Location Information -->
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900 mb-4">Location Information</h3>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700">Address</label>
+                                        <div class="mt-1 text-gray-900">
+                                            {{ selectedBusiness.location.addressLine1 }}<br>
+                                            <span *ngIf="selectedBusiness.location.addressLine2">{{
+                                                selectedBusiness.location.addressLine2}}<br></span>
+                                            {{ selectedBusiness.location.city }}, {{ selectedBusiness.location.state }},
+                                            {{
+                                            selectedBusiness.location.postalCode }}<br>
+                                            {{ selectedBusiness.location.country }}
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="text-sm font-medium text-gray-700">Latitude</label>
+                                            <div class="mt-1 text-gray-900">{{ selectedBusiness.location.latitude }}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="text-sm font-medium text-gray-700">Longitude</label>
+                                            <div class="mt-1 text-gray-900">{{ selectedBusiness.location.longitude }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Business Hours -->
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900 mb-4">Business Hours</h3>
+                                <div class="space-y-3">
+                                    <div *ngFor="let hour of selectedBusiness.hours"
+                                        class="border border-gray-200 rounded-lg p-3">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="font-semibold text-gray-900">{{ getDayOfWeek(hour.dayOfWeek)
+                                                }}</span>
+                                            <span *ngIf="hour.isClosed"
+                                                class="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+                                                Closed
+                                            </span>
+                                        </div>
+                                        <div *ngIf="!hour.isClosed" class="grid grid-cols-2 gap-4 text-sm">
+                                            <div>
+                                                <span class="text-gray-600">Open:</span>
+                                                <span class="text-gray-900 ml-2">{{ hour.openTime }}</span>
+                                            </div>
+                                            <div>
+                                                <span class="text-gray-600">Close:</span>
+                                                <span class="text-gray-900 ml-2">{{ hour.closeTime }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Admin Notes -->
+                            <div *ngIf="selectedBusiness.status === 0">
+                                <h3 class="text-lg font-bold text-gray-900 mb-4">Admin Notes</h3>
+                                <textarea [(ngModel)]="adminNotes[selectedBusiness.id]" rows="3"
+                                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-600"
+                                    placeholder="Add notes or reasons for rejection..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons - Fixed at bottom -->
+                        <div class="mt-6 pt-6 border-t flex items-center justify-between"
+                            *ngIf="selectedBusiness.status === 0">
+                            <div class="text-sm text-gray-600">
+                                Review and take action on this business
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <button (click)="rejectBusiness(selectedBusiness)"
+                                    class="px-6 py-2 border-2 border-orange-600 text-orange-600 rounded hover:bg-red-50 transition font-semibold">
+                                    Reject
+                                </button>
+                                <button (click)="verifyBusiness(selectedBusiness)"
+                                    class="px-6 py-2 bg-teal-600 text-white rounded hover:bg-teal-700 transition font-semibold">
+                                    Verify Business
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 pt-6 border-t text-sm text-gray-600" *ngIf="selectedBusiness.status !== 0">
+                            <span class="font-semibold">Status:</span>
+                            This business has been {{ getStatusText(selectedBusiness.status) }}.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

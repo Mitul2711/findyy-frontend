@@ -87,13 +87,11 @@ export class BussinesslistComponent {
   }
 
   viewDetails(business: Business): void {
-    console.log('View details for:', business.name);
     this.router.navigate(['/businessdetails']);
     // Add your navigation logic here
   }
 
   contact(business: Business): void {
-    console.log('Contact:', business.name);
     this.router.navigate(['/businessreview']);
     // Add your contact logic here
   }

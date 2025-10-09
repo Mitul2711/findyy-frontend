@@ -141,7 +141,6 @@ business: Business = {
 
   ngOnInit(): void {
     // Initialize component
-    console.log('Business Dashboard initialized');
   }
 
   getStatusText(status: number): string {

@@ -13,8 +13,10 @@ export const FixedRoutes = {
   BusinessRegister: {
     Business: 'business',
     BusinessLocation: 'business/location',
-    BusinessHours: 'business/hours'
+    BusinessHours: 'business/hours',
+    BusinessVerify: 'business/review',
   },
+  BusinessDash: 'BusinessDash/dashboard',
   Dashboard: 'dashboard',
   Wildcard: '**'
 };

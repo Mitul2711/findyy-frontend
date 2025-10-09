@@ -25,9 +25,6 @@ export class HeaderComponent {
 
 
   ngOnInit(): void {
-    // Check if user is logged in
-    console.log(this.authService.currentUser());
-    
   }
 
   getUserInitials(): string {

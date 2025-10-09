@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../../../service/auth.service';
+import { BusinessService } from '../../../service/business.service';
 
 @Component({
   selector: 'app-business-home',
@@ -78,6 +80,35 @@ export class BusinessHomeComponent {
 
   toggleFaq(index: number): void {
     this.openFaq = this.openFaq === index ? null : index;
+  }
+
+  dashboardData: any = {
+    isVerified: false
+  };
+
+  constructor(private authService: AuthService, private businessService: BusinessService) {}
+
+  ngOnInit() {
+    this.getDashData();
+  }
+
+  getDashData() {
+    this.businessService.getBusinessDashData(this.authService.currentUser().BusinessId).subscribe((res: any) => {
+      this.dashboardData = res.data;
+    })
+  }
+
+   getProgressBarColor(): string {
+    const pct = this.dashboardData.completionPercentage;
+
+    if (pct === 0) return 'bg-gray-400';
+    if (pct === 25) return 'bg-orange-500';
+    if (pct === 50) return 'bg-yellow-500';
+    if (pct === 75) return 'bg-teal-600';
+    if (pct === 100) return 'bg-green-500';
+
+    // Optional: default color
+    return 'bg-gray-400';
   }
 
 }

@@ -38,7 +38,6 @@ export class BusinessreviewComponent {
       return;
     }
 
-    console.log('Review submitted:', this.form);
     this.submitted = true;
 
     // Reset form after submission
