@@ -14,15 +14,27 @@ export class BusinessService {
   }
 
   addUpdateBusinessLocation(data: any) {
-    return this.http.post(`${Modules.Base}${FixedRoutes.BusinessRegister.Business}/location`, data);
+    return this.http.post(`${Modules.Base}${FixedRoutes.BusinessRegister.BusinessLocation}`, data);
   }
 
-  getBusinessData() {
-    return this.http.get(`${Modules.Base}${FixedRoutes.BusinessRegister.Business}`);
+  addUpdateBusinessHours(data: any) {
+    return this.http.post(`${Modules.Base}${FixedRoutes.BusinessRegister.BusinessHours}`, data);
+  }
+
+  getBusinessDataById(ownerUserId: any) {
+    return this.http.get(`${Modules.Base}${FixedRoutes.BusinessRegister.Business}/${ownerUserId}`);
   }
 
   updateBusiness(data: any) {
     return this.http.post(`${Modules.Base}${FixedRoutes.BusinessRegister.Business}/${data.id}`, data);
+  }
+
+  getBusinessLocationById(businessId: any) {
+    return this.http.get(`${Modules.Base}${FixedRoutes.BusinessRegister.BusinessLocation}/${businessId}`);
+  }
+
+  getBusinessHoursById(businessId: any) {
+    return this.http.get(`${Modules.Base}${FixedRoutes.BusinessRegister.BusinessHours}/${businessId}`);
   }
 
 }

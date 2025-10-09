@@ -11,7 +11,9 @@ export const FixedRoutes = {
     Forgot: 'forgot',
   },
   BusinessRegister: {
-    Business: 'business'
+    Business: 'business',
+    BusinessLocation: 'business/location',
+    BusinessHours: 'business/hours'
   },
   Dashboard: 'dashboard',
   Wildcard: '**'
