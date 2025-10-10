@@ -27,7 +27,7 @@ interface Step {
 export class BussinessformComponent {
   currentStep = 1;
   form: FormGroup;
-
+businessInfo: any;
   // Flags to track API data
   hasApiHours = false;
   hasApiLocation = false;
@@ -77,22 +77,22 @@ export class BussinessformComponent {
       {
         number: 1,
         title: 'Business Details',
-        status: this.isStepCompleted(1) ? 'completed' : (this.currentStep === 1 ? 'in-progress' : 'pending')
+        status: this.businessInfo == null ? 'pending' : this.isStepCompleted(1) ? 'completed' : (this.currentStep === 1 ? 'in-progress' : 'pending')
       },
       {
         number: 2,
         title: 'Location',
-        status: this.isStepCompleted(2) ? 'completed' : (this.currentStep === 2 ? 'in-progress' : 'pending')
+        status: this.businessInfo == null ? 'pending' : this.isStepCompleted(2) ? 'completed' : (this.currentStep === 2 ? 'in-progress' : 'pending')
       },
       {
         number: 3,
         title: 'Hours',
-        status: this.isStepCompleted(3) ? 'completed' : (this.currentStep === 3 ? 'in-progress' : 'pending')
+        status: this.businessInfo == null ? 'pending' : this.isStepCompleted(3) ? 'completed' : (this.currentStep === 3 ? 'in-progress' : 'pending')
       },
       {
         number: 4,
         title: 'Review & Submit',
-        status: this.currentStep === 4 ? 'in-progress' : 'pending'
+        status: this.businessInfo == null ? 'pending' : this.isStepCompleted(4) ? 'completed' : (this.currentStep === 4 ? 'in-progress' : 'pending')
       }
     ];
   }
@@ -106,6 +106,8 @@ export class BussinessformComponent {
         return this.hasApiLocation || !!this.form.value.address1;
       case 3:
         return this.hasApiHours && this.getOpenDaysCount() > 0;
+        case 4:
+        return this.businessInfo.isVerified;
       default:
         return false;
     }
@@ -239,10 +241,11 @@ export class BussinessformComponent {
   /** Patch API response */
   patchValue() {
     this.businessService.getBusinessDataById(this.authService.currentUser().UserId).subscribe((res: any) => {
-      if (!res) return;
+      if (!res.status) return;
 
       const data = res.data;
 
+      this.businessInfo = res.data
       // Step 1
       this.form.patchValue({
         id: data.id,
