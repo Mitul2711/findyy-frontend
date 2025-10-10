@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { BusinessService } from '../../../service/business.service';
+import { AuthService } from '../../../service/auth.service';
 
 interface BusinessLocation {
   id: number;
@@ -139,8 +141,18 @@ business: Business = {
     }
   ];
 
+  constructor(private businessService: BusinessService, private authService: AuthService) {}
+
   ngOnInit(): void {
-    // Initialize component
+    this.getBusinessData();
+  }
+
+  getBusinessData() {
+    this.businessService.getBusinessDataById(this.authService.currentUser().UserId).subscribe((res: any) => {
+      if(res.status) {
+        this.business = res.data;
+      }
+    })
   }
 
   getStatusText(status: number): string {

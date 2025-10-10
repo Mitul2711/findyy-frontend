@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { RouterModule } from '@angular/router';
 
 interface Category {
   name: string;
@@ -20,7 +21,7 @@ interface Step {
 
 @Component({
   selector: 'app-user-home',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './user-home.component.html',
   styleUrl: './user-home.component.scss'
 })
