@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BusinessService } from '../../service/business.service';
 import { ToastService } from '../../service/toast.service';
+import { AuthService } from '../../service/auth.service';
 
 interface BusinessHours {
   dayOfWeek: number;
@@ -23,6 +24,7 @@ interface Business {
   hours: BusinessHours[];
   status: 0 | 1 | 2 | 3;
   createdAt: Date;
+  owner: any
 }
 
 interface BusinessLocation {
@@ -144,7 +146,7 @@ export class AdmindashComponent {
 
   businessData: any[] = [];
 
-  constructor(private businessService: BusinessService, private toastService: ToastService) { }
+  constructor(private businessService: BusinessService, private toastService: ToastService, private authService: AuthService) { }
 
   ngOnInit() {
     this.getAllBusinessData();
@@ -154,8 +156,6 @@ export class AdmindashComponent {
     this.businessService.getAllBusinessData().subscribe((res: any) => {
       if (res.status) {
         this.businessData = res.data;
-        console.log(this.businessData);
-
       } else {
         this.toastService.showError(res.message)
       }
@@ -214,9 +214,16 @@ export class AdmindashComponent {
     }
     // Move to next pending business
     this.businessService.verifyBusiness(payload).subscribe((res: any) => {
-      console.log(res);
       this.getAllBusinessData();
       this.selectBusiness(business);
+      let payload = {
+      firstName: business.owner.firstName,
+      lastName: business.owner.lastName,
+      email: business.email,
+      businessName: business.name,
+      businessDescription: business.description
+    }
+    this.authService.businessNotification(payload).subscribe((res: any) => {})
     })
     // this.selectNextPendingBusiness();
   }
@@ -230,7 +237,6 @@ export class AdmindashComponent {
     }
     // Move to next pending business
     this.businessService.verifyBusiness(payload).subscribe((res: any) => {
-      console.log(res);
       this.getAllBusinessData();
     })
     // this.selectNextPendingBusiness();

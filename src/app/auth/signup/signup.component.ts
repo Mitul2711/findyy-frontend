@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { ToastService } from '../../service/toast.service';
+import { BusinessService } from '../../service/business.service';
 
 @Component({
   selector: 'app-signup',
@@ -20,11 +21,22 @@ export class SignupComponent {
   phone: string = '';
   city: string = '';
   businessName: string = '';
-  businessCategory: string = '';
+  businessCategoryId: number = 0;
   password: string = '';
   confirmPassword: string = '';
+  categoryOption: any[] = [];
 
-  constructor(private authService: AuthService, private toastService: ToastService) { }
+  constructor(private authService: AuthService, private toastService: ToastService, private businessService: BusinessService) { }
+
+  ngOnInit() {
+    this.getCategory();
+  }
+
+  getCategory() {
+    this.businessService.getBusinessCategory().subscribe((res: any) => {
+      this.categoryOption = res.status ? res.data : [];
+    })
+  }
 
   onSubmit() {
 
@@ -41,7 +53,7 @@ export class SignupComponent {
       city: this.city,
       password: this.password,
       businessName: this.businessName,
-      businessCategory: this.businessCategory
+      businessCategoryId: this.businessCategoryId
     }
 
     this.authService.registerUser(payload).subscribe((res: any) => {
