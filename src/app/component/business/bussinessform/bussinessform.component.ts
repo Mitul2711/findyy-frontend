@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { BusinessService } from '../../../service/business.service';
 import { AuthService } from '../../../service/auth.service';
 import { ToastService } from '../../../service/toast.service';
+import { SubmitpopupComponent } from '../../../common/submitpopup/submitpopup.component';
 
 interface DayHours {
   openTime: string;
@@ -20,11 +21,12 @@ interface Step {
 @Component({
   selector: 'app-bussinessform',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, SubmitpopupComponent],
   templateUrl: './bussinessform.component.html',
   styleUrls: ['./bussinessform.component.scss']
 })
 export class BussinessformComponent {
+  showModal = false;
   currentStep = 1;
   form: FormGroup;
   businessInfo: any;
@@ -169,7 +171,6 @@ export class BussinessformComponent {
           phone: this.form.value.phone,
           email: this.form.value.email,
         };
-        console.log(payload);
 
         if (payload.id === 0) {
           this.businessService.registerBusiness(payload).subscribe((res: any) => {
@@ -242,6 +243,7 @@ export class BussinessformComponent {
   }
 
   onSubmit(): void {
+    this.showModal = true;
     let payload = {
       firstName: this.authService.currentUser().first_name,
       lastName: this.authService.currentUser().last_name,
@@ -249,10 +251,7 @@ export class BussinessformComponent {
       businessName: this.businessInfo.name,
       businessDescription: this.businessInfo.businessCategory.description
     }
-    this.authService.adminNotification(payload).subscribe((res: any) => {
-      console.log(res);
-      alert('Business registered successfully!');
-    })
+    this.authService.adminNotification(payload).subscribe((res: any) => {})
   }
 
   /** Patch API response */

@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { BusinessService } from '../../../service/business.service';
 
 
 interface Category {
@@ -21,7 +22,7 @@ interface Category {
 export class BusinesscategoriesComponent {
   searchQuery = '';
 
-  constructor(private sanitizer: DomSanitizer) { }
+  constructor(private sanitizer: DomSanitizer, private businessService: BusinessService) { }
 
   categories: Category[] = [
     {
@@ -131,6 +132,10 @@ export class BusinesscategoriesComponent {
     }
   ];
 
+  ngOnInit() {
+    this.getCategories();
+  }
+
   get filteredCategories(): Category[] {
     if (!this.searchQuery.trim()) {
       return this.categories;
@@ -139,6 +144,14 @@ export class BusinesscategoriesComponent {
       cat.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
       cat.description.toLowerCase().includes(this.searchQuery.toLowerCase())
     );
+  }
+
+  getCategories() {
+    this.businessService.getBusinessCategory().subscribe((res: any) => {
+      this.categories = res.data;
+      console.log(this.categories);
+      
+    })
   }
 
   searchCategories(): void {

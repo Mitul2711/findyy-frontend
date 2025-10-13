@@ -47,4 +47,9 @@ adminNotification(data: any) {
   return this.http.post(`${Modules.Base}${FixedRoutes.AdminNotification}`, data);
 }
 
+businessNotification(data: any) {
+  return this.http.post(`${Modules.Base}${FixedRoutes.BusinessNotification}`, data);
+}
+
+
 }

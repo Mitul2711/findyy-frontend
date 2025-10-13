@@ -17,6 +17,7 @@ export const FixedRoutes = {
     BusinessVerify: 'business/review',
   },
   AdminNotification: "admin/notify-new-business",
+  BusinessNotification: "admin/notify-to-business",
   BusinessDash: 'BusinessDash/dashboard',
   BusinessCategory: 'BusinessCategory',
   Dashboard: 'dashboard',

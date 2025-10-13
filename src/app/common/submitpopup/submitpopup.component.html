@@ -1,0 +1,59 @@
+<div class="fixed inset-0 bg-opacity-10 backdrop-blur-[1px] flex items-center justify-center z-50 p-4"
+     (click)="onOverlayClick($event)">
+
+      <div class="bg-white rounded-xl p-8 md:p-10 max-w-md w-full relative shadow-2xl animate-slide-up">
+        <!-- Close Button -->
+        <button 
+          (click)="closeModal()"
+          class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 transition-colors text-2xl w-8 h-8 flex items-center justify-center"
+          aria-label="Close"
+        >
+          ×
+        </button>
+
+        <!-- Success Icon -->
+        <div class="flex justify-center mb-8">
+          <div class="relative w-24 h-24">
+            <!-- Outer circle with gradient -->
+            <div class="absolute inset-0 bg-gradient-to-br from-teal-100 to-teal-200 rounded-full animate-pulse-slow"></div>
+            
+            <!-- Inner circle -->
+            <div class="absolute inset-3 bg-teal-500 rounded-full flex items-center justify-center shadow-lg">
+              <!-- Checkmark SVG -->
+              <svg 
+                class="w-10 h-10 text-white animate-check" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  stroke-linecap="round" 
+                  stroke-linejoin="round" 
+                  stroke-width="3" 
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="text-center">
+          <h2 class="text-2xl md:text-3xl font-semibold text-gray-800 mb-5">
+            Business Details Submitted!
+          </h2>
+          
+          <p class="text-gray-600 text-base leading-relaxed mb-8 px-2">
+            Thank you for submitting your business details. Our admin team will review and verify your information shortly. You'll be notified once your business is approved.
+          </p>
+
+          <!-- OK Button -->
+          <button 
+            (click)="closeModal()"
+            class="bg-teal-500 hover:bg-teal-600 text-white font-semibold py-3 px-16 rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 uppercase tracking-wide"
+          >
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
