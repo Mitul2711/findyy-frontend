@@ -16,7 +16,9 @@ export const FixedRoutes = {
     BusinessHours: 'business/hours',
     BusinessVerify: 'business/review',
   },
+  AdminNotification: "admin/notify-new-business",
   BusinessDash: 'BusinessDash/dashboard',
+  BusinessCategory: 'BusinessCategory',
   Dashboard: 'dashboard',
   Wildcard: '**'
 };

@@ -27,10 +27,11 @@ interface Step {
 export class BussinessformComponent {
   currentStep = 1;
   form: FormGroup;
-businessInfo: any;
+  businessInfo: any;
   // Flags to track API data
   hasApiHours = false;
   hasApiLocation = false;
+  categoryOption: any[] = [];
 
   constructor(private fb: FormBuilder, private businessService: BusinessService, private authService: AuthService, private toastService: ToastService) {
     this.form = this.fb.group({
@@ -69,6 +70,14 @@ businessInfo: any;
 
   ngOnInit() {
     this.patchValue();
+    this.getCategory();
+  }
+
+  getCategory() {
+    this.businessService.getBusinessCategory().subscribe((res: any) => {
+      this.categoryOption = res.status ? res.data : [];
+      this.form.get('category')?.setValue(parseInt(this.authService.currentUser().businessCategory));
+    })
   }
 
   /** Step management */
@@ -106,7 +115,7 @@ businessInfo: any;
         return this.hasApiLocation || !!this.form.value.address1;
       case 3:
         return this.hasApiHours && this.getOpenDaysCount() > 0;
-        case 4:
+      case 4:
         return this.businessInfo.isVerified;
       default:
         return false;
@@ -156,10 +165,12 @@ businessInfo: any;
           name: this.form.value.businessName,
           description: this.form.value.description,
           website: this.form.value.website,
-          category: this.form.value.category,
+          businessCategoryId: this.form.value.category,
           phone: this.form.value.phone,
           email: this.form.value.email,
         };
+        console.log(payload);
+
         if (payload.id === 0) {
           this.businessService.registerBusiness(payload).subscribe((res: any) => {
             if (res.status) {
@@ -231,11 +242,17 @@ businessInfo: any;
   }
 
   onSubmit(): void {
-    if (this.form.valid) {
-      alert('Business registered successfully!');
-    } else {
-      alert('Please fill all required fields before submitting.');
+    let payload = {
+      firstName: this.authService.currentUser().first_name,
+      lastName: this.authService.currentUser().last_name,
+      email: this.businessInfo.email,
+      businessName: this.businessInfo.name,
+      businessDescription: this.businessInfo.businessCategory.description
     }
+    this.authService.adminNotification(payload).subscribe((res: any) => {
+      console.log(res);
+      alert('Business registered successfully!');
+    })
   }
 
   /** Patch API response */
@@ -250,7 +267,7 @@ businessInfo: any;
       this.form.patchValue({
         id: data.id,
         businessName: data.name,
-        category: data.category,
+        category: data.businessCategoryId,
         description: data.description,
         website: data.website,
         email: data.email,
@@ -258,7 +275,7 @@ businessInfo: any;
       });
 
       this.businessService.getBusinessLocationById(data.id).subscribe((locationRes: any) => {
-        if (locationRes) {
+        if (locationRes.status) {
           this.hasApiLocation = true;
           this.form.patchValue({
             locationId: locationRes.data.id,
@@ -280,7 +297,7 @@ businessInfo: any;
 
       const dayMap = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
       this.businessService.getBusinessHoursById(data.id).subscribe((hoursRes: any) => {
-        if (hoursRes.data && hoursRes.data.length > 0) {
+        if (hoursRes.status && hoursRes.data.length > 0) {
           this.hasApiHours = true;
           const hoursGroup = this.form.get('hours') as FormGroup;
 

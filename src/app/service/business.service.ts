@@ -49,4 +49,8 @@ export class BusinessService {
     return this.http.post(`${Modules.Base}${FixedRoutes.BusinessRegister.BusinessVerify}/${data.id}`, data);
   }
 
+    
+  getBusinessCategory() {
+    return this.http.get(`${Modules.Base}${FixedRoutes.BusinessCategory}`);
+  }
 }
