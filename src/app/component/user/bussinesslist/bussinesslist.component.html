@@ -76,7 +76,7 @@
               <div class="w-full lg:w-64 h-64 flex-shrink-0">
                 <img
                   [src]="business.image"
-                  [alt]="business.name"
+                  [alt]="business.businessName"
                   class="w-full h-full object-cover"
                 />
               </div>
@@ -86,14 +86,16 @@
                 <div class="flex items-start justify-between mb-3 flex-wrap gap-2">
                   <div>
                     <h2 class="text-xl font-bold text-gray-900 mb-1">
-                      {{ business.name }}
+                      {{ business.businessName }}
                     </h2>
                     <div class="flex items-center gap-3 text-sm flex-wrap">
-                      <span class="text-gray-600">{{ business.category }}</span>
+                      <span class="text-gray-600">{{ business.categoryName }}</span>
                       <div class="flex items-center gap-1">
                         <span class="text-yellow-500">★</span>
-                        <span class="font-medium">{{ business.rating }}</span>
-                        <span class="text-gray-500">({{ business.reviews }} reviews)</span>
+                        <span class="font-medium">{{ business.rating || 0}}</span>
+                        <span class="text-gray-500">({{ business.reviewCount || 0 }} reviews)</span>
+                        <span class="text-gray-500" *ngIf="business.isOpen">Closed At - {{business.closeTime}}</span>
+                        <span class="text-gray-500" *ngIf="!business.isOpen">Open At - {{business.openTime}}</span>
                       </div>
                     </div>
                   </div>
@@ -119,8 +121,8 @@
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                     </svg>
-                    <span>{{ business.address }}</span>
-                    <span class="text-teal-600 font-medium">• {{ business.distance }}</span>
+                    <span>{{ business.location.addressLine1 }}</span>
+                    <span class="text-teal-600 font-medium">• {{ business.location.distance || 0 }}</span>
                   </div>
                   <div class="flex items-center gap-2 text-sm text-gray-600">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

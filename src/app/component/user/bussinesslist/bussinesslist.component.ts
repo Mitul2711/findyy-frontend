@@ -1,22 +1,54 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { BusinessService } from '../../../service/business.service';
 
 
-interface Business {
-  id: number;
-  name: string;
-  category: string;
-  rating: number;
-  reviews: number;
+export interface Business {
+  image: string,
+  businessId: number;
+  businessName: string;
   description: string;
-  address: string;
-  distance: string;
+  website: string;
   phone: string;
-  isOpen: boolean;
-  image: string;
+  email: string;
+  isVerified: boolean;
+  status: string;
+  avgRating: number;
+  reviewCount: number;
+  rating: number;
+  createdAt: string;
+  updatedAt: string;
+  isOpen: boolean
+  categoryName: string;
+  openTime: string;
+  closeTime: string;
+  location: BusinessLocation;
+  hours: BusinessHour[];
 }
+
+interface BusinessLocation {
+  locationId: number;
+  addressLine1: string;
+  addressLine2?: string;
+  distance: string;
+  city: string;
+  state: string;
+  country: string;
+  postalCode?: string;
+  latitude?: number;
+  longitude?: number;
+}
+
+interface BusinessHour {
+  businessHourId: number;
+  dayOfWeek: string;
+  openTime: string;
+  closeTime: string;
+  isClosed: boolean;
+}
+
 
 @Component({
   selector: 'app-bussinesslist',
@@ -25,54 +57,68 @@ interface Business {
   styleUrl: './bussinesslist.component.scss'
 })
 export class BussinesslistComponent {
-  searchTerm = 'Tiffin Service';
-  location = 'Ahmedabad';
+  searchTerm: any;
+  location: any;
   showResults = true;
   sortBy = 'recommended';
 
-  constructor(private router: Router) { }
+  businesses: Business[] = [];
 
-  businesses: Business[] = [
-    {
-      id: 1,
-      name: 'Spice Kitchen Tiffin Service',
-      category: 'Tiffin Service',
-      rating: 4.8,
-      reviews: 127,
-      description: 'Authentic home-style Indian meals delivered fresh daily. Specializing in North Indian cuisine with vegetarian and vegan options.',
-      address: '123 Main Street, Downtown',
-      distance: '0.8 mi',
-      phone: '(555) 123-4567',
-      isOpen: true,
-      image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop'
-    },
-    {
-      id: 2,
-      name: 'Home Comfort Meals',
-      category: 'Tiffin Service',
-      rating: 4.6,
-      reviews: 89,
-      description: 'Nutritious and delicious home-cooked meals with customizable meal plans. Perfect for busy professionals and families.',
-      address: '456 Oak Avenue, Midtown',
-      distance: '1.2 mi',
-      phone: '(555) 234-5678',
-      isOpen: true,
-      image: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&h=300&fit=crop'
-    },
-    {
-      id: 3,
-      name: 'Sunshine Tiffin Co.',
-      category: 'Tiffin Service',
-      rating: 4.5,
-      reviews: 156,
-      description: 'Daily fresh tiffin service with traditional recipes.',
-      address: '789 Park Lane, Uptown',
-      distance: '2.1 mi',
-      phone: '(555) 345-6789',
-      isOpen: false,
-      image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&h=300&fit=crop'
+  constructor(private router: Router, private route: ActivatedRoute, private businessService: BusinessService) { }
+
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      this.searchTerm = params['serviceInput'] || null;
+      this.location = params['locationInput'] || null;
+    });
+    let payload = {
+      category: this.searchTerm,
+      location: this.location
     }
-  ];
+    this.getBusinessList(payload);
+
+  }
+
+  getBusinessList(payload: any) {
+    this.businessService.searchBusiness(payload).subscribe((res: any) => {
+      this.businesses = res.status ? res.data : [];
+      this.updateBusinessOpenStatusAndFormatHours(this.businesses);
+    })
+  }
+
+  updateBusinessOpenStatusAndFormatHours(businesses: Business[]): Business[] {
+    const now = new Date();
+    const currentDay = now.getDay();
+    const currentTimeMinutes = now.getHours() * 60 + now.getMinutes();
+
+    return businesses.map(business => {
+      const todayHour = business.hours.find(h => Number(h.dayOfWeek) === currentDay);
+      business.hours.forEach(h => {
+        business.openTime = this.formatTimeAMPM(h.openTime);
+        business.closeTime = this.formatTimeAMPM(h.closeTime);
+      });
+
+      if (!todayHour || todayHour.isClosed) {
+        business.isOpen = false;
+        return business;
+      }
+
+      const [openH, openM] = todayHour.openTime.split(':').map(Number);
+      const [closeH, closeM] = todayHour.closeTime.split(':').map(Number);
+      const openMinutes = openH * 60 + openM;
+      const closeMinutes = closeH * 60 + closeM;
+      business.isOpen = currentTimeMinutes >= openMinutes && currentTimeMinutes <= closeMinutes;
+
+      return business;
+    });
+  }
+
+  formatTimeAMPM(time: string): string {
+    const [hours, minutes] = time.split(':').map(Number);
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const hour12 = hours % 12 || 12; // convert 0 => 12
+    return `${hour12}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+  }
 
   get filteredBusinesses(): Business[] {
     return this.businesses;
@@ -83,12 +129,19 @@ export class BussinesslistComponent {
   }
 
   handleSearch(): void {
+    let payload = {
+      category: this.searchTerm,
+      location: this.location
+    }
+    this.getBusinessList(payload);
     this.showResults = this.searchTerm.trim() !== '';
   }
 
   viewDetails(business: Business): void {
-    this.router.navigate(['/businessdetails']);
-    // Add your navigation logic here
+    this.router.navigate(['/businessdetails'], {
+      state: { business },
+      replaceUrl: true
+    });
   }
 
   contact(business: Business): void {
