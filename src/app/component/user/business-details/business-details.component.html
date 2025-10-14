@@ -5,9 +5,9 @@
         <!-- Breadcrumb -->
         <nav class="mb-6">
           <ol class="flex items-center space-x-2 text-sm text-gray-600">
-            <li><a href="#" class="hover:text-teal-600">Home</a></li>
+            <li><a routerLink="/" class="hover:text-teal-600">Home</a></li>
             <li><span class="mx-2">/</span></li>
-            <li><a href="#" class="hover:text-teal-600">{{ business.category || 'Services' }}</a></li>
+            <li><a routerLink="/businesslist" class="hover:text-teal-600">{{ business.categoryName || 'Services' }}</a></li>
             <li><span class="mx-2">/</span></li>
             <li class="text-gray-900 font-medium">{{ business.businessName }}</li>
           </ol>
@@ -31,7 +31,7 @@
                   </div>
                   <div class="flex items-center space-x-4 text-sm text-gray-600 mb-3">
                     <span class="inline-flex items-center px-3 py-1 rounded-full bg-gray-100">
-                      {{ business.category || 'General Services' }}
+                      {{ business.categoryName || 'General Services' }}
                     </span>
                     <div class="flex items-center">
                       <div class="flex items-center mr-2">
