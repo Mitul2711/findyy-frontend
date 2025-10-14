@@ -144,8 +144,11 @@ export class BussinesslistComponent {
     });
   }
 
-  contact(business: Business): void {
-    this.router.navigate(['/businessreview']);
+  Review(business: Business): void {
+    this.router.navigate(['/businessreview'], {
+      state: { business },
+      replaceUrl: true
+    });
     // Add your contact logic here
   }
 }

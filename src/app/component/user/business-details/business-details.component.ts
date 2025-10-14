@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 interface BusinessHour {
@@ -30,7 +30,7 @@ interface Business {
   businessName: string;
   description?: string;
   website?: string;
-  category?: string;
+  categoryName?: string;
   phone?: string;
   email?: string;
   isVerified: boolean;
@@ -45,7 +45,7 @@ interface Business {
 
 @Component({
   selector: 'app-business-details',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './business-details.component.html',
   styleUrl: './business-details.component.scss'
 })
@@ -58,8 +58,6 @@ export class BusinessDetailComponent implements OnInit {
   constructor(private router: Router) {
     const navigation = this.router.getCurrentNavigation();
     this.business = navigation?.extras.state?.['business'];
-    console.log(this.business);
-    
   }
   
   ngOnInit() {
