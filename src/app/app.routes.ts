@@ -11,6 +11,7 @@ import { BusinessDetailComponent } from './component/user/business-details/busin
 import { BusinessInfoComponent } from './component/business/business-info/business-info.component';
 import { VerifyEmailComponent } from './auth/verify-email/verify-email.component';
 import { AdmindashComponent } from './component/admindash/admindash.component';
+import { CategoryListComponent } from './component/user/category-list/category-list.component';
 
 export const routes: Routes = [
     {path: "", component: HomeComponent},
@@ -20,6 +21,7 @@ export const routes: Routes = [
     {path: "businesslist", component: BussinesslistComponent},
     {path: "businessreview", component: BusinessreviewComponent},
     {path: "businesscategory", component: BusinesscategoriesComponent},
+    {path: "categorylist", component: CategoryListComponent},
     {path: "howitworks", component: HowitworksComponent},
     {path: "businessdetails", component: BusinessDetailComponent},
     {path: "businessinfo", component: BusinessInfoComponent},
