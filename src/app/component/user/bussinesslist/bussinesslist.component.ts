@@ -151,6 +151,5 @@ export class BussinesslistComponent {
       state: { business },
       replaceUrl: true
     });
-    // Add your contact logic here
   }
 }
