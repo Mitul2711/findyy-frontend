@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../service/auth.service';
+import { BusinessService } from '../../../service/business.service';
+import { ToastService } from '../../../service/toast.service';
 
 interface BusinessHour {
   dayOfWeek: string;
@@ -31,7 +33,7 @@ interface Business {
 
 @Component({
   selector: 'app-businessreview',
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, RouterModule],
   templateUrl: './businessreview.component.html',
   styleUrl: './businessreview.component.scss'
 })
@@ -41,23 +43,33 @@ export class BusinessreviewComponent implements OnInit {
   hoverRating = 0;
   submitted = false;
 
-  constructor(private fb: FormBuilder, private router: Router, private authService: AuthService) {
+  constructor(private fb: FormBuilder, private router: Router, private toastService: ToastService,
+     private authService: AuthService, private businessService: BusinessService) {
     const navigation = this.router.getCurrentNavigation();
     this.business = navigation?.extras?.state?.['business'];
   }
 
   ngOnInit(): void {
+    this.getReview();
     this.reviewForm = this.fb.group({
-      rating: [0, [Validators.required, Validators.min(1)]],
+      ratingStarCount: [0, [Validators.required, Validators.min(1)]],
       name: [`${this.authService.currentUser().first_name} ${this.authService.currentUser().last_name}`, Validators.required],
       email: [this.authService.currentUser().email, [Validators.required, Validators.email]],
-      title: ['', Validators.required],
-      review: ['', Validators.required],
+      reviewTitle: ['', Validators.required],
+      reviewDescription: ['', Validators.required],
     });
   }
 
-  setRating(rating: number): void {
-    this.reviewForm.patchValue({ rating });
+  getReview() {
+    this.businessService.getBusinessReviewForUser(this.authService.currentUser().UserId).subscribe((res: any) => {
+      if(res.status) {
+        this.reviewForm.patchValue(res.data[0]);
+      }
+    })
+  }
+
+  setRating(ratingStarCount: number): void {
+    this.reviewForm.get('ratingStarCount')?.setValue(ratingStarCount);
   }
 
   submitReview(): void {
@@ -66,14 +78,20 @@ export class BusinessreviewComponent implements OnInit {
       return;
     }
 
-    console.log('Review Submitted:', this.reviewForm.value);
-    this.submitted = true;
-
-    // Reset form after submission
-    setTimeout(() => {
-      this.reviewForm.reset({ rating: 0 });
-      this.hoverRating = 0;
-      this.submitted = false;
-    }, 2000);
+    let payload = {
+      ...this.reviewForm.value,
+      createdBy: this.authService.currentUser().UserId,
+      updatedBy: this.authService.currentUser().UserId,
+      businessId: this.business.businessId
+    }
+    this.businessService.addBusinessReview(payload).subscribe({
+      next: (res: any) => {
+        this.toastService.showSuccess(res.message);
+        this.getReview();
+      },
+      error: (err) => {
+        this.toastService.showError(err);
+      }
+    });
   }
 }
