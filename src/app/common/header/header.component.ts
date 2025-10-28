@@ -12,6 +12,7 @@ import { AuthService } from '../../service/auth.service';
 })
 export class HeaderComponent {
 
+  unreadCount = 3;
  mobileMenuOpen = false;
  isUser: boolean = false;
 
