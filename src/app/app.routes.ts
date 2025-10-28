@@ -12,6 +12,7 @@ import { BusinessInfoComponent } from './component/business/business-info/busine
 import { VerifyEmailComponent } from './auth/verify-email/verify-email.component';
 import { AdmindashComponent } from './component/admindash/admindash.component';
 import { CategoryListComponent } from './component/user/category-list/category-list.component';
+import { ChatComponent } from './common/chat/chat.component';
 
 export const routes: Routes = [
     {path: "", component: HomeComponent},
@@ -26,6 +27,7 @@ export const routes: Routes = [
     {path: "businessdetails", component: BusinessDetailComponent},
     {path: "businessinfo", component: BusinessInfoComponent},
     {path: "verifyemail", component: VerifyEmailComponent},
+    {path: "chat", component: ChatComponent},
     {path: "admin", component: AdmindashComponent},
     {path: '**', component: HomeComponent},
 ];
