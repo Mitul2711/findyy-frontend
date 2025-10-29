@@ -25,7 +25,7 @@ export class BusinesscategoriesComponent {
 
   constructor(private sanitizer: DomSanitizer, private businessService: BusinessService, private router: Router) { }
 
-  categories!: Category[];
+  categories: Category[] = [];
 
   ngOnInit() {
     this.getCategories();

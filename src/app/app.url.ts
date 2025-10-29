@@ -16,6 +16,11 @@ export const FixedRoutes = {
     BusinessHours: 'business/hours',
     BusinessVerify: 'business/review',
   },
+  ChatMessage: {
+    Chat: 'ChatMessage',
+    GetAllChatsForUser: 'GetAllChatsForUser',
+    GetChatBetweenUsers: 'GetChatBetweenUsers'
+  },
   AdminNotification: "admin/notify-new-business",
   BusinessNotification: "admin/notify-to-business",
   SearchBusiness: "SearchBusiness",

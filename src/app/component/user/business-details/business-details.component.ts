@@ -72,7 +72,6 @@ export class BusinessDetailComponent implements OnInit {
   }
   
   ngOnInit() {
-    console.log(this.business);
     this.getBusinessReview();
   }
 
@@ -136,6 +135,13 @@ export class BusinessDetailComponent implements OnInit {
       .filter(part => part.trim() !== '')
       .map(part => part[0].toUpperCase())
       .join('');
+  }
+
+  navigateToChat(business: any) {
+    this.router.navigate(['/chat'], {
+      state: { business },
+      replaceUrl: true
+    });
   }
 
 }
