@@ -92,7 +92,7 @@
                       <span class="text-gray-600">{{ business.categoryName }}</span>
                       <div class="flex items-center gap-1">
                         <span class="text-yellow-500">★</span>
-                        <span class="font-medium">{{ business.rating || 0}}</span>
+                        <span class="font-medium">{{ business.avgRating || 0}}</span>
                         <span class="text-gray-500">({{ business.reviewCount || 0 }} reviews)</span>
                         <span class="text-gray-500" *ngIf="business.isOpen">Closed At - {{business.closeTime}}</span>
                         <span class="text-gray-500" *ngIf="!business.isOpen">Open At - {{business.openTime}}</span>
