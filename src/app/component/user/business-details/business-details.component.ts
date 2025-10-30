@@ -74,6 +74,43 @@ export class BusinessDetailComponent implements OnInit {
   ngOnInit() {
     this.getBusinessReview();
   }
+// Gallery properties
+currentGalleryIndex: number = 0;
+galleryItemsPerPage: number = 1;
+
+galleryItems = [
+  { id: 1, title: 'Office exterior', color: 'bg-teal-50', icon: 'teal' },
+  { id: 2, title: 'Team at work', color: 'bg-rose-50', icon: 'rose' },
+  { id: 3, title: 'Modern workspace', color: 'bg-teal-50', icon: 'teal' },
+  { id: 4, title: 'Technology lab', color: 'bg-rose-50', icon: 'rose' },
+  { id: 5, title: 'Conference room', color: 'bg-teal-50', icon: 'teal' },
+  { id: 6, title: 'Break area', color: 'bg-rose-50', icon: 'rose' }
+];
+
+get maxGalleryIndex(): number {
+  return Math.ceil(this.galleryItems.length / this.galleryItemsPerPage) - 1;
+}
+
+get galleryDots(): number[] {
+  return Array(this.maxGalleryIndex + 1).fill(0);
+}
+
+nextSlide(): void {
+  this.currentGalleryIndex = this.currentGalleryIndex >= this.maxGalleryIndex ? 0 : this.currentGalleryIndex + 1;
+}
+
+prevSlide(): void {
+  this.currentGalleryIndex = this.currentGalleryIndex <= 0 ? this.maxGalleryIndex : this.currentGalleryIndex - 1;
+}
+
+goToSlide(index: number): void {
+  this.currentGalleryIndex = index;
+}
+
+getVisibleGalleryItems() {
+  const startIdx = this.currentGalleryIndex * this.galleryItemsPerPage;
+  return this.galleryItems.slice(startIdx, startIdx + this.galleryItemsPerPage);
+}
 
   getStarArray(): number[] {
     return [1, 2, 3, 4, 5];

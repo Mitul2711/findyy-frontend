@@ -87,6 +87,59 @@
           </p>
         </div>
 
+        <!-- Gallery Section -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h2 class="text-xl font-bold text-gray-900 mb-6">Gallery</h2>
+          
+          <div class="relative">
+            <!-- Navigation Arrows -->
+            <button
+              (click)="prevSlide()"
+              class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
+              aria-label="Previous">
+              <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            <button
+              (click)="nextSlide()"
+              class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
+              aria-label="Next">
+              <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            <!-- Gallery Items -->
+            <div class="grid grid-cols-1 gap-6">
+              <div
+                *ngFor="let item of getVisibleGalleryItems()"
+                [class]="item.color + ' rounded-2xl p-12 flex flex-col items-center justify-center min-h-[280px] transition-all duration-300'">
+                <div [class]="'w-16 h-16 rounded-full flex items-center justify-center mb-4 ' + 
+                  (item.icon === 'teal' ? 'bg-teal-200/50 text-teal-400' : 'bg-rose-200/50 text-rose-400')">
+                  <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                  </svg>
+                </div>
+                <p class="text-gray-600 text-lg font-medium">{{ item.title }}</p>
+              </div>
+            </div>
+
+            <!-- Pagination Dots -->
+            <div class="flex justify-center gap-2 mt-6">
+              <button
+                *ngFor="let dot of galleryDots; let idx = index"
+                (click)="goToSlide(idx)"
+                [class]="'h-2 rounded-full transition-all duration-300 ' + 
+                  (currentGalleryIndex === idx ? 'bg-teal-500 w-6' : 'bg-gray-300 hover:bg-gray-400 w-2')"
+                [attr.aria-label]="'Go to slide ' + (idx + 1)">
+              </button>
+            </div>
+          </div>
+        </div>
+
         <!-- Business Hours -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
