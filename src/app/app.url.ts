@@ -19,6 +19,7 @@ export const FixedRoutes = {
   AdminNotification: "admin/notify-new-business",
   BusinessNotification: "admin/notify-to-business",
   SearchBusiness: "SearchBusiness",
+  BusinessPhoto: "BusinessPhoto/bulk",
   BusinessDash: 'BusinessDash/dashboard',
   BusinessCategory: 'BusinessCategory',
   Dashboard: 'dashboard',

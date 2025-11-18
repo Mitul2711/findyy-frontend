@@ -94,10 +94,16 @@ export class BusinessHomeComponent {
 
   getDashData() {
     console.log(this.authService.currentUser());
-    
-    this.businessService.getBusinessDashData(this.authService.currentUser().BusinessId).subscribe((res: any) => {
-      this.dashboardData = res.data;
-    })
+    if(this.authService.currentUser().BusinessId) {
+      this.businessService.getBusinessDashData(this.authService.currentUser().BusinessId).subscribe((res: any) => {
+        this.dashboardData = res.data;
+      })
+    } else {
+      this.dashboardData = {
+        isVerified: false,
+        completionPercentage: 0
+      };
+    }
   }
 
    getProgressBarColor(): string {

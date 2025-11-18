@@ -6,6 +6,11 @@ import { AuthService } from '../../../service/auth.service';
 import { ToastService } from '../../../service/toast.service';
 import { SubmitpopupComponent } from '../../../common/submitpopup/submitpopup.component';
 
+interface Photo {
+  id: number;
+  url: string;
+}
+
 interface DayHours {
   openTime: string;
   closeTime: string;
@@ -57,7 +62,11 @@ export class BussinessformComponent {
       latitude: [''],
       longitude: [''],
 
-      // Step 3
+      // step 5
+      mainPhoto: [null, Validators.required],
+      additionalPhotos: [[]],
+
+      // Step 4
       hours: this.fb.group({
         sun: this.fb.group({ openTime: ['09:00'], closeTime: ['17:00'], isClosed: [true], id: 0, dayOfWeek: 0 }),
         mon: this.fb.group({ openTime: ['09:00'], closeTime: ['17:00'], isClosed: [false], id: 0, dayOfWeek: 1 }),
@@ -97,13 +106,18 @@ export class BussinessformComponent {
       },
       {
         number: 3,
-        title: 'Hours',
+        title: 'Photos',
         status: this.businessInfo == null ? 'pending' : this.isStepCompleted(3) ? 'completed' : (this.currentStep === 3 ? 'in-progress' : 'pending')
       },
       {
         number: 4,
-        title: 'Review & Submit',
+        title: 'Hours',
         status: this.businessInfo == null ? 'pending' : this.isStepCompleted(4) ? 'completed' : (this.currentStep === 4 ? 'in-progress' : 'pending')
+      },
+      {
+        number: 5,
+        title: 'Review & Submit',
+        status: this.businessInfo == null ? 'pending' : this.isStepCompleted(5) ? 'completed' : (this.currentStep === 5 ? 'in-progress' : 'pending')
       }
     ];
   }
@@ -146,10 +160,10 @@ export class BussinessformComponent {
 
   /** Navigation */
   nextStep(): void {
-    if (!this.isStepCompleted(this.currentStep)) {
-      alert('Please complete the current step before proceeding.');
-      return;
-    }
+    // if (!this.isStepCompleted(this.currentStep)) {
+    //   alert('Please complete the current step before proceeding.');
+    //   return;
+    // }
     if (this.currentStep < 4) this.currentStep++;
   }
 
@@ -219,6 +233,39 @@ export class BussinessformComponent {
           }, 1000);
         });
       } else if (this.currentStep === 3) {
+        const businessId = this.form.value.id;
+        const mainPhotoFile: File = this.form.value.mainPhoto;
+        const additionalFiles: File[] = this.form.value.additionalPhotos || [];
+
+        if (!businessId) {
+          this.toastService.showError('Business must be saved before uploading photos.');
+          return;
+        }
+
+        if (!mainPhotoFile) {
+          this.toastService.showError('Main photo is required.');
+          return;
+        }
+
+        this.businessService
+          .uploadBusinessPhotos(businessId, mainPhotoFile, additionalFiles, 'Main business photo')
+          .subscribe({
+            next: (res: any) => {
+              if (res.status) {
+                this.toastService.showSuccess(res.message || 'Photos uploaded successfully');
+              } else {
+                this.toastService.showError(res.message || 'Failed to upload photos');
+              }
+
+              setTimeout(() => {
+                this.currentStep++;   // move to Hours step
+              }, 1000);
+            },
+            error: () => {
+              this.toastService.showError('Error while uploading photos');
+            }
+          });
+      } else if (this.currentStep === 4) {
         const payload = Object.values(this.form.value.hours).map((day: any) => ({
           id: day.id,
           businessId: this.form.value.id,
@@ -251,7 +298,7 @@ export class BussinessformComponent {
       businessName: this.businessInfo.name,
       businessDescription: this.businessInfo.businessCategory.description
     }
-    this.authService.adminNotification(payload).subscribe((res: any) => {})
+    this.authService.adminNotification(payload).subscribe((res: any) => { })
   }
 
   /** Patch API response */
@@ -335,4 +382,91 @@ export class BussinessformComponent {
       this.currentStep = 1; // default to Step 1
     }
   }
+
+  // photos upload handlers
+  mainPhoto: string | null = null;
+  additionalPhotos: Photo[] = [];
+  onMainPhotoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+
+      if (this.validateFile(file)) {
+        const reader = new FileReader();
+        reader.onload = (e: ProgressEvent<FileReader>) => {
+          this.mainPhoto = e.target?.result as string;
+          this.form.patchValue({
+            mainPhoto: file
+          });
+          this.form.get('mainPhoto')?.markAsTouched();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  }
+
+  onAdditionalPhotosSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files) {
+      Array.from(input.files).forEach(file => {
+        if (this.validateFile(file)) {
+          const reader = new FileReader();
+          reader.onload = (e: ProgressEvent<FileReader>) => {
+            const newPhoto = {
+              id: Date.now() + Math.random(),
+              url: e.target?.result as string,
+              file: file
+            };
+            this.additionalPhotos.push(newPhoto);
+
+            // Update form control
+            this.form.patchValue({
+              additionalPhotos: this.additionalPhotos.map((p: any) => p.file)
+            });
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+      // Reset input
+      input.value = '';
+    }
+  }
+
+  validateFile(file: File): boolean {
+    const validTypes = ['image/png', 'image/jpeg'];
+    const maxSize = 10 * 1024 * 1024; // 10MB
+
+    if (!validTypes.includes(file.type)) {
+      alert('Please upload a PNG or JPG file');
+      return false;
+    }
+
+    if (file.size > maxSize) {
+      alert('File size must be less than 10MB');
+      return false;
+    }
+
+    return true;
+  }
+
+  removeMainPhoto(): void {
+    this.mainPhoto = null;
+    this.form.patchValue({
+      mainPhoto: null
+    });
+    this.form.get('mainPhoto')?.markAsTouched();
+  }
+
+  removeAdditionalPhoto(id: number): void {
+    this.additionalPhotos = this.additionalPhotos.filter(photo => photo.id !== id);
+    this.form.patchValue({
+      additionalPhotos: this.additionalPhotos.map((p: any) => p.file)
+    });
+  }
+
+  get isMainPhotoInvalid(): boolean {
+    const control = this.form.get('mainPhoto');
+    return !!(control && control.invalid && control.touched);
+  }
+
 }
