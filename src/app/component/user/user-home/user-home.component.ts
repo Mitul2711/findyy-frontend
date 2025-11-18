@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 interface Category {
   name: string;
@@ -29,7 +29,7 @@ export class UserHomeComponent {
   serviceInput = '';
   locationInput = '';
 
-  constructor(private sanitizer: DomSanitizer) { }
+  constructor(private sanitizer: DomSanitizer, private router: Router) { }
 
   categories: Category[] = [
     {
@@ -93,6 +93,18 @@ export class UserHomeComponent {
       ...c,
       icon: this.sanitizer.bypassSecurityTrustHtml(c.icon)
     }));
+  }
+
+  onSearch() {
+    this.router.navigate(['/businesslist'])
+    localStorage.setItem(
+      'search',
+      JSON.stringify({
+        serviceInput: this.serviceInput,
+        locationInput: this.locationInput
+      })
+    );
+
   }
 
 }

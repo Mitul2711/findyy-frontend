@@ -57,6 +57,18 @@ export class BusinessService {
     return this.http.post(`${Modules.Base}${FixedRoutes.SearchBusiness}`, data);
   }
 
+  addBusinessReview(data: any) {
+    return this.http.post(`${Modules.Base}${FixedRoutes.BusinessReview}`, data);
+  }
+
+  getBusinessReviewForUser(id?: any) {
+    return this.http.get(`${Modules.Base}${FixedRoutes.BusinessReview}/user/${id}`);
+  }
+
+  getBusinessReviewForBusiness(id?: any) {
+    return this.http.get(`${Modules.Base}${FixedRoutes.BusinessReview}/business/${id}`);
+  }
+
   uploadBusinessPhotos(businessId: number, mainPhoto: File, additionalPhotos: File[], mainCaption?: string) {
   const formData = new FormData();
   formData.append('businessId', businessId.toString());

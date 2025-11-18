@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { BusinessService } from '../../../service/business.service';
 
 
@@ -64,13 +64,15 @@ export class BussinesslistComponent {
 
   businesses: Business[] = [];
 
-  constructor(private router: Router, private route: ActivatedRoute, private businessService: BusinessService) { }
+  constructor(private router: Router, private businessService: BusinessService) { }
 
   ngOnInit() {
-    this.route.queryParams.subscribe(params => {
-      this.searchTerm = params['serviceInput'] || null;
-      this.location = params['locationInput'] || null;
-    });
+    const saved = localStorage.getItem('search');
+    if (saved) {
+      const { serviceInput, locationInput } = JSON.parse(saved);
+      this.searchTerm = serviceInput;
+      this.location = locationInput;
+    }
     let payload = {
       category: this.searchTerm,
       location: this.location
@@ -149,6 +151,5 @@ export class BussinesslistComponent {
       state: { business },
       replaceUrl: true
     });
-    // Add your contact logic here
   }
 }

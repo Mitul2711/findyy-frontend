@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { BusinessService } from '../../../service/business.service';
+import { Router, RouterModule } from '@angular/router';
 
 
 interface Category {
@@ -15,122 +16,16 @@ interface Category {
 
 @Component({
   selector: 'app-businesscategories',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './businesscategories.component.html',
   styleUrl: './businesscategories.component.scss'
 })
 export class BusinesscategoriesComponent {
   searchQuery = '';
 
-  constructor(private sanitizer: DomSanitizer, private businessService: BusinessService) { }
+  constructor(private sanitizer: DomSanitizer, private businessService: BusinessService, private router: Router) { }
 
-  categories: Category[] = [
-    {
-      id: 1,
-      name: 'Tiffin Service',
-      description: 'Home-cooked meals delivered fresh',
-      businessCount: 127,
-      icon: 'utensils'
-    },
-    {
-      id: 2,
-      name: 'Plumbing',
-      description: 'Professional plumbing services',
-      businessCount: 84,
-      icon: 'wrench'
-    },
-    {
-      id: 3,
-      name: 'House Cleaning',
-      description: 'Reliable cleaning professionals',
-      businessCount: 156,
-      icon: 'sparkles'
-    },
-    {
-      id: 4,
-      name: 'Handyman',
-      description: 'Fix, repair, and maintain',
-      businessCount: 93,
-      icon: 'hammer'
-    },
-    {
-      id: 5,
-      name: 'Auto Repair',
-      description: 'Car maintenance and repair',
-      businessCount: 71,
-      icon: 'car'
-    },
-    {
-      id: 6,
-      name: 'Home Renovation',
-      description: 'Transform your living space',
-      businessCount: 62,
-      icon: 'home'
-    },
-    {
-      id: 7,
-      name: 'Hair & Beauty',
-      description: 'Salons and beauty services',
-      businessCount: 189,
-      icon: 'scissors'
-    },
-    {
-      id: 8,
-      name: 'Health & Wellness',
-      description: 'Fitness and wellness centers',
-      businessCount: 134,
-      icon: 'heart'
-    },
-    {
-      id: 9,
-      name: 'Education & Tutoring',
-      description: 'Learn new skills',
-      businessCount: 98,
-      icon: 'education'
-    },
-    {
-      id: 10,
-      name: 'Photography',
-      description: 'Capture special moments',
-      businessCount: 76,
-      icon: 'camera'
-    },
-    {
-      id: 11,
-      name: 'Event Planning',
-      description: 'Make events memorable',
-      businessCount: 54,
-      icon: 'gift'
-    },
-    {
-      id: 12,
-      name: 'Pet Services',
-      description: 'Care for your furry friends',
-      businessCount: 67,
-      icon: 'paw'
-    },
-    {
-      id: 13,
-      name: 'IT Services',
-      description: 'Tech support and solutions',
-      businessCount: 112,
-      icon: 'laptop'
-    },
-    {
-      id: 14,
-      name: 'Laundry & Dry Cleaning',
-      description: 'Professional garment care',
-      businessCount: 43,
-      icon: 'shirt'
-    },
-    {
-      id: 15,
-      name: 'Catering',
-      description: 'Food for every occasion',
-      businessCount: 89,
-      icon: 'coffee'
-    }
-  ];
+  categories: Category[] = [];
 
   ngOnInit() {
     this.getCategories();
@@ -149,8 +44,6 @@ export class BusinesscategoriesComponent {
   getCategories() {
     this.businessService.getBusinessCategory().subscribe((res: any) => {
       this.categories = res.data;
-      console.log(this.categories);
-      
     })
   }
 
@@ -158,7 +51,7 @@ export class BusinesscategoriesComponent {
     // Search functionality is handled by filteredCategories getter
   }
 
-  getCategoryIcon(iconName: string): SafeHtml  {
+  getCategoryIcon(iconName: string): SafeHtml {
     const icons: { [key: string]: string } = {
       utensils: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>',
       wrench: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>',
@@ -178,5 +71,12 @@ export class BusinesscategoriesComponent {
     };
     const svg = icons[iconName] || icons['wrench'];
     return this.sanitizer.bypassSecurityTrustHtml(svg);
+  }
+
+  navigateToList(category: any) {
+    this.router.navigate(['/categorylist'], {
+      state: { category },
+      replaceUrl: true
+    });
   }
 }

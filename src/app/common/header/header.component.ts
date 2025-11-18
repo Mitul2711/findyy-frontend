@@ -12,8 +12,9 @@ import { AuthService } from '../../service/auth.service';
 })
 export class HeaderComponent {
 
- mobileMenuOpen = false;
- isUser: boolean = false;
+  unreadCount = 3;
+  mobileMenuOpen = false;
+  isUser: boolean = false;
 
  constructor(public authService: AuthService, private router: Router) {
   this.isUser = authService.isUserLoggedIn() ? authService.currentUser().role == "customer" : true;
