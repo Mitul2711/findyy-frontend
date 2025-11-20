@@ -69,4 +69,25 @@ export class BusinessService {
     return this.http.get(`${Modules.Base}${FixedRoutes.BusinessReview}/business/${id}`);
   }
 
+  uploadBusinessPhotos(businessId: number, mainPhoto: File, additionalPhotos: File[], mainCaption?: string) {
+  const formData = new FormData();
+  formData.append('businessId', businessId.toString());
+  formData.append('mainPhoto', mainPhoto);
+
+  additionalPhotos.forEach(file => {
+    formData.append('additionalPhotos', file);
+  });
+
+  if (mainCaption) {
+    formData.append('mainCaption', mainCaption);
+  }
+
+return this.http.post(
+      `${Modules.Base}${FixedRoutes.BusinessPhoto}`,
+      formData
+    );
+  }
+
+
+
 }

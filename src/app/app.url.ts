@@ -25,6 +25,7 @@ export const FixedRoutes = {
   BusinessNotification: "admin/notify-to-business",
   SearchBusiness: "SearchBusiness",
   BusinessReview: "BusinessReview",
+  BusinessPhoto: "BusinessPhoto/bulk",
   BusinessDash: 'BusinessDash/dashboard',
   BusinessCategory: 'BusinessCategory',
   Dashboard: 'dashboard',
