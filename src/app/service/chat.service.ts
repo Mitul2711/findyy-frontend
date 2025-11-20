@@ -42,7 +42,7 @@ export class ChatService {
     return this.hubConnection
       .invoke('SendMessage', senderId, receiverId, message)
       .then(() => console.log('✅ Message sent successfully'))
-      .catch(err => console.error('❌ Error sending message:', err));
+      .catch((err: any) => console.error('❌ Error sending message:', err));
   }
 
   public onReceiveMessage(callback: (senderId: string, message: string, sentAt: string) => void) {

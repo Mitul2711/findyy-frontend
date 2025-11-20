@@ -64,30 +64,42 @@ export class BusinessService {
   getBusinessReviewForUser(id?: any) {
     return this.http.get(`${Modules.Base}${FixedRoutes.BusinessReview}/user/${id}`);
   }
-
+  
   getBusinessReviewForBusiness(id?: any) {
     return this.http.get(`${Modules.Base}${FixedRoutes.BusinessReview}/business/${id}`);
   }
 
-  uploadBusinessPhotos(businessId: number, mainPhoto: File, additionalPhotos: File[], mainCaption?: string) {
+uploadBusinessPhotos(
+  businessId: number,
+  mainPhoto: File | null,
+  additionalPhotos: File[],
+  removedPhotoIds: number[],
+  mainCaption?: string
+) {
   const formData = new FormData();
-  formData.append('businessId', businessId.toString());
-  formData.append('mainPhoto', mainPhoto);
+  formData.append('BusinessId', businessId.toString());
+
+  if (mainPhoto) {
+    formData.append('MainPhoto', mainPhoto);
+  }
 
   additionalPhotos.forEach(file => {
-    formData.append('additionalPhotos', file);
+    formData.append('AdditionalPhotos', file);
+  });
+
+  removedPhotoIds.forEach(id => {
+    formData.append('RemovedPhotoIds', id.toString());
   });
 
   if (mainCaption) {
-    formData.append('mainCaption', mainCaption);
+    formData.append('MainCaption', mainCaption);
   }
 
-return this.http.post(
-      `${Modules.Base}${FixedRoutes.BusinessPhoto}`,
-      formData
-    );
+  return this.http.post(`${Modules.Base}BusinessPhoto/bulk`, formData);
+}
+
+  getBusinessPhotos(businessId: any) {
+    return this.http.get(`${Modules.Base}${FixedRoutes.GetBusinessPhoto}?businessId=${businessId}`);
   }
-
-
 
 }
