@@ -5,6 +5,7 @@ import { BusinessService } from '../../../service/business.service';
 import { AuthService } from '../../../service/auth.service';
 import { ToastService } from '../../../service/toast.service';
 import { SubmitpopupComponent } from '../../../common/submitpopup/submitpopup.component';
+import { Modules } from '../../../app.url';
 
 interface Photo {
   id: number;
@@ -39,6 +40,14 @@ export class BussinessformComponent {
   hasApiHours = false;
   hasApiLocation = false;
   categoryOption: any[] = [];
+
+  mainPhoto: string | null = null;
+mainPhotoId: number | null = null;
+
+additionalPhotos: { id?: number; url: string; file?: File }[] = [];
+
+removedPhotoIds: number[] = [];
+
 
   constructor(private fb: FormBuilder, private businessService: BusinessService, private authService: AuthService, private toastService: ToastService) {
     this.form = this.fb.group({
@@ -232,40 +241,39 @@ export class BussinessformComponent {
             this.currentStep++;
           }, 1000);
         });
-      } else if (this.currentStep === 3) {
-        const businessId = this.form.value.id;
-        const mainPhotoFile: File = this.form.value.mainPhoto;
-        const additionalFiles: File[] = this.form.value.additionalPhotos || [];
+      }else if (this.currentStep === 3) {
+  const businessId = this.form.value.id;
 
-        if (!businessId) {
-          this.toastService.showError('Business must be saved before uploading photos.');
-          return;
+  if (!businessId) {
+    this.toastService.showError('Business must be saved before uploading photos.');
+    return;
+  }
+
+  const mainPhotoControl = this.form.value.mainPhoto;
+  const mainPhotoFile = mainPhotoControl instanceof File ? mainPhotoControl : null;
+
+  const additionalFiles: File[] = (this.form.value.additionalPhotos || [])
+    .filter((f: any) => f instanceof File);
+
+  this.businessService
+    .uploadBusinessPhotos(businessId, mainPhotoFile, additionalFiles, this.removedPhotoIds, 'Main business photo')
+    .subscribe({
+      next: (res: any) => {
+        if (res.status) {
+          this.toastService.showSuccess(res.message || 'Photos updated successfully');
+        } else {
+          this.toastService.showError(res.message || 'Failed to update photos');
         }
 
-        if (!mainPhotoFile) {
-          this.toastService.showError('Main photo is required.');
-          return;
-        }
-
-        this.businessService
-          .uploadBusinessPhotos(businessId, mainPhotoFile, additionalFiles, 'Main business photo')
-          .subscribe({
-            next: (res: any) => {
-              if (res.status) {
-                this.toastService.showSuccess(res.message || 'Photos uploaded successfully');
-              } else {
-                this.toastService.showError(res.message || 'Failed to upload photos');
-              }
-
-              setTimeout(() => {
-                this.currentStep++;   // move to Hours step
-              }, 1000);
-            },
-            error: () => {
-              this.toastService.showError('Error while uploading photos');
-            }
-          });
-      } else if (this.currentStep === 4) {
+        setTimeout(() => {
+          this.currentStep++;
+        }, 1000);
+      },
+      error: () => {
+        this.toastService.showError('Error while updating photos');
+      }
+    });
+} else if (this.currentStep === 4) {
         const payload = Object.values(this.form.value.hours).map((day: any) => ({
           id: day.id,
           businessId: this.form.value.id,
@@ -341,6 +349,31 @@ export class BussinessformComponent {
         this.checkStepNavigation();
       });
 
+      this.businessService.getBusinessPhotos(data.id).subscribe((photoRes: any) => {
+  if (photoRes.status && photoRes.data && photoRes.data.length > 0) {
+    const baseUrl = Modules.Base.replace(/\/api\/$/, "");
+    const photos = photoRes.data as any[];
+
+    const main = photos.find(p => p.isMain);
+    if (main) {
+      this.mainPhoto = baseUrl + main.url;   // preview
+      this.mainPhotoId = main.id;
+      this.form.get('mainPhoto')?.setValue(null); // no file yet
+    }
+
+    this.additionalPhotos = photos
+      .filter(p => !p.isMain)
+      .map(p => ({
+        id: p.id,
+        url: baseUrl + p.url
+      }));
+
+    this.form.get('additionalPhotos')?.setValue([]);
+  }
+});
+
+
+
       const dayMap = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
       this.businessService.getBusinessHoursById(data.id).subscribe((hoursRes: any) => {
         if (hoursRes.status && hoursRes.data.length > 0) {
@@ -383,54 +416,31 @@ export class BussinessformComponent {
     }
   }
 
-  // photos upload handlers
-  mainPhoto: string | null = null;
-  additionalPhotos: Photo[] = [];
-  onMainPhotoSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
-
+  onAdditionalPhotosSelected(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  if (input.files) {
+    Array.from(input.files).forEach(file => {
       if (this.validateFile(file)) {
         const reader = new FileReader();
         reader.onload = (e: ProgressEvent<FileReader>) => {
-          this.mainPhoto = e.target?.result as string;
+          const newPhoto = {
+            url: e.target?.result as string,
+            file: file
+          };
+          this.additionalPhotos.push(newPhoto);
+
           this.form.patchValue({
-            mainPhoto: file
+            additionalPhotos: this.additionalPhotos
+              .filter(p => !!p.file)
+              .map(p => p.file as File)
           });
-          this.form.get('mainPhoto')?.markAsTouched();
         };
         reader.readAsDataURL(file);
       }
-    }
+    });
+    input.value = '';
   }
-
-  onAdditionalPhotosSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files) {
-      Array.from(input.files).forEach(file => {
-        if (this.validateFile(file)) {
-          const reader = new FileReader();
-          reader.onload = (e: ProgressEvent<FileReader>) => {
-            const newPhoto = {
-              id: Date.now() + Math.random(),
-              url: e.target?.result as string,
-              file: file
-            };
-            this.additionalPhotos.push(newPhoto);
-
-            // Update form control
-            this.form.patchValue({
-              additionalPhotos: this.additionalPhotos.map((p: any) => p.file)
-            });
-          };
-          reader.readAsDataURL(file);
-        }
-      });
-      // Reset input
-      input.value = '';
-    }
-  }
+}
 
   validateFile(file: File): boolean {
     const validTypes = ['image/png', 'image/jpeg'];
@@ -457,16 +467,50 @@ export class BussinessformComponent {
     this.form.get('mainPhoto')?.markAsTouched();
   }
 
-  removeAdditionalPhoto(id: number): void {
-    this.additionalPhotos = this.additionalPhotos.filter(photo => photo.id !== id);
-    this.form.patchValue({
-      additionalPhotos: this.additionalPhotos.map((p: any) => p.file)
-    });
+removeAdditionalPhoto(id?: number): void {
+  if (id) {
+    // existing photo from DB → mark for delete
+    this.removedPhotoIds.push(id);
   }
+
+  this.additionalPhotos = this.additionalPhotos.filter(photo => photo.id !== id);
+
+  // keep only new files in form control
+  this.form.patchValue({
+    additionalPhotos: this.additionalPhotos
+      .filter(p => !!p.file)
+      .map(p => p.file as File)
+  });
+}
+
 
   get isMainPhotoInvalid(): boolean {
     const control = this.form.get('mainPhoto');
     return !!(control && control.invalid && control.touched);
   }
+
+  onMainPhotoSelected(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+
+    if (this.validateFile(file)) {
+      const reader = new FileReader();
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        this.mainPhoto = e.target?.result as string; // preview
+        this.form.patchValue({ mainPhoto: file });   // real File
+        this.form.get('mainPhoto')?.markAsTouched();
+
+        // if there was an old main from DB, mark it as removed
+        if (this.mainPhotoId) {
+          this.removedPhotoIds.push(this.mainPhotoId);
+          this.mainPhotoId = null;
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+}
+
 
 }
